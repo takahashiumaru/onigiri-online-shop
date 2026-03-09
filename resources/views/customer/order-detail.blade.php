@@ -19,12 +19,24 @@
                     <h6 class="fw-bold mb-0">Item Pesanan</h6>
                     <span class="text-muted small">{{ $order->order_number }}</span>
                 </div>
+                <style>
+                    /* order detail thumbnails */
+                    .order-item-thumb { width:60px; height:60px; border-radius:8px; overflow:hidden; display:flex; align-items:center; justify-content:center; background:#fff5f5; font-size:1.6rem; flex-shrink:0; }
+                    .order-item-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+                </style>
                 <div class="card-body p-0">
                     @foreach($order->items as $item)
                     <div class="d-flex align-items-center p-3 border-bottom gap-3">
-                        <div class="rounded-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background: #fff5f5; font-size: 2rem; flex-shrink: 0;">🍙</div>
+                        <div class="order-item-thumb">
+                            @if(isset($item->product) && $item->product->image && \Storage::disk('public')->exists($item->product->image))
+                                <img src="{{ \Storage::url($item->product->image) }}" alt="{{ $item->product->name ?? $item->product_name }}">
+                            @else
+                                <!-- fallback emoji -->
+                                🍙
+                            @endif
+                        </div>
                         <div class="flex-grow-1">
-                            <div class="fw-semibold">{{ $item->product_name }}</div>
+                            <div class="fw-semibold">{{ $item->product->name ?? $item->product_name }}</div>
                             <small class="text-muted">Rp {{ number_format($item->price, 0, ',', '.') }} x {{ $item->quantity }}</small>
                         </div>
                         <div class="fw-bold">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</div>

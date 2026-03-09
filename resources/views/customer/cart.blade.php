@@ -13,6 +13,41 @@
         <a href="{{ route('products') }}" class="btn btn-primary mt-3 px-4">Mulai Belanja</a>
     </div>
     @else
+    <style>
+        /* Responsive cart layout */
+        :root { --tp-green: #00b14f; --tp-green-soft: #e7f7ee; }
+        .cart-item { gap: 1rem; align-items: center; }
+        .item-image img,
+        .item-image .placeholder {
+            border-radius: .5rem;
+            object-fit: cover;
+        }
+        .quantity-input { text-align: center; }
+
+        /* Desktop sizes */
+        @media (min-width: 768px) {
+            .item-image img,
+            .item-image .placeholder { width: 80px; height: 80px; }
+            .quantity-input { width: 55px; }
+            .order-summary { top: 80px; position: sticky; }
+        }
+
+        /* Mobile / small screens */
+        @media (max-width: 767.98px) {
+            .cart-item { flex-direction: column; align-items: stretch; }
+            .item-image { width: 100%; }
+            .item-image img,
+            .item-image .placeholder { width: 100%; height: 150px; }
+            .item-details { width: 100%; margin-top: .5rem; }
+            .item-controls { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-top: .5rem; gap: .5rem; }
+            .quantity-input { width: 70px; }
+            .order-summary { position: static; top: auto; }
+            .card .card-header .fw-semibold { font-size: .95rem; }
+        }
+        /* Tokopedia-like accents */
+        .tp-accent { background: var(--tp-green); border-color: var(--tp-green); color: #fff; }
+        .tp-badge { background: var(--tp-green-soft); color: var(--tp-green); padding: .25rem .5rem; border-radius: 999px; font-size: .8rem; }
+    </style>
     <div class="row g-4">
         <div class="col-lg-8">
             <div class="card">
@@ -27,24 +62,30 @@
                 </div>
                 <div class="card-body p-0">
                     @foreach($cartItems as $item)
-                    <div class="d-flex align-items-center p-3 border-bottom gap-3">
+                    <div class="d-flex align-items-center p-3 border-bottom cart-item">
                         <div class="flex-shrink-0">
-                            @if($item->product->image && \Storage::disk('public')->exists($item->product->image))
-                                <img src="{{ Storage::url($item->product->image) }}" alt="{{ $item->product->name }}" class="rounded-3" style="width: 80px; height: 80px; object-fit: cover;">
-                            @else
-                                <div class="rounded-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; background: #fff5f5; font-size: 2.5rem;">🍙</div>
-                            @endif
+                            <div class="item-image">
+                                @if($item->product->image && \Storage::disk('public')->exists($item->product->image))
+                                    <img src="{{ Storage::url($item->product->image) }}" alt="{{ $item->product->name }}">
+                                @else
+                                    <div class="placeholder d-flex align-items-center justify-content-center" style="background: #fff5f5; font-size: 2.5rem;">🍙</div>
+                                @endif
+                            </div>
                         </div>
-                        <div class="flex-grow-1">
+                        <div class="flex-grow-1 item-details">
                             <h6 class="fw-bold mb-0">{{ $item->product->name }}</h6>
-                            <small class="text-muted">{{ ucfirst($item->product->category) }}</small>
-                            <div class="fw-bold" style="color: #E63946;">Rp {{ number_format($item->product->price, 0, ',', '.') }}</div>
+                            <div class="d-flex align-items-center gap-2">
+                                <small class="text-muted">{{ ucfirst($item->product->category) }}</small>
+                                <span class="tp-badge">Penjual • Toko</span>
+                            </div>
+                            <div class="fw-semibold" style="color:var(--tp-green);">Rp {{ number_format($item->product->price, 0, ',', '.') }}</div>
+                            <div class="text-muted small">Rp {{ number_format($item->product->price * $item->quantity,0,',','.') }} subtotal</div>
                         </div>
-                        <div class="d-flex align-items-center gap-2">
+                        <div class="d-flex align-items-center gap-2 item-controls">
                             <form action="{{ route('cart.update', $item) }}" method="POST" class="d-flex align-items-center gap-1">
                                 @csrf @method('PATCH')
                                 <button type="button" class="btn btn-outline-secondary btn-sm px-2" onclick="decreaseQty(this)" data-max="{{ $item->product->stock }}">-</button>
-                                <input type="number" name="quantity" value="{{ $item->quantity }}" min="1" max="{{ $item->product->stock }}" class="form-control form-control-sm text-center" style="width: 55px;" onchange="this.form.submit()">
+                                <input type="number" name="quantity" value="{{ $item->quantity }}" min="1" max="{{ $item->product->stock }}" class="form-control form-control-sm text-center quantity-input" onchange="this.form.submit()">
                                 <button type="button" class="btn btn-outline-secondary btn-sm px-2" onclick="increaseQty(this)" data-max="{{ $item->product->stock }}">+</button>
                             </form>
                             <div class="fw-bold text-nowrap" style="min-width: 100px; text-align: right;">
@@ -65,7 +106,7 @@
 
         <!-- Order Summary -->
         <div class="col-lg-4">
-            <div class="card sticky-top" style="top: 80px;">
+            <div class="card order-summary">
                 <div class="card-header"><h6 class="fw-bold mb-0">Ringkasan Pesanan</h6></div>
                 <div class="card-body">
                     <div class="d-flex justify-content-between mb-2">
@@ -79,9 +120,9 @@
                     <hr>
                     <div class="d-flex justify-content-between mb-3">
                         <span class="fw-bold">Total</span>
-                        <span class="fw-bold fs-5" style="color: #E63946;">Rp {{ number_format($total + 10000, 0, ',', '.') }}</span>
+                        <span class="fw-bold fs-5" style="color:var(--tp-green);">Rp {{ number_format($total + 10000, 0, ',', '.') }}</span>
                     </div>
-                    <a href="{{ route('checkout.index') }}" class="btn btn-primary w-100 py-2">
+                    <a href="{{ route('checkout.index') }}" class="btn tp-accent w-100 py-2">
                         <i class="bi bi-credit-card me-2"></i>Checkout Sekarang
                     </a>
                     <a href="{{ route('products') }}" class="btn btn-outline-secondary w-100 mt-2">

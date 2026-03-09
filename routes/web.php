@@ -10,6 +10,7 @@ use App\Http\Controllers\Customer\OrderController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 // =====================
@@ -75,4 +76,24 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
     Route::patch('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.update-status');
+});
+
+// User notifications page (protected)
+Route::middleware('auth')->get('/notifications', function () {
+    return view('notifications.index');
+})->name('notifications');
+
+// Admin notifications page (protected + admin check)
+Route::middleware('auth')->get('/admin/notifications', function () {
+    $user = auth()->user();
+    if (!$user || !method_exists($user, 'isAdmin') || !$user->isAdmin()) {
+        abort(403);
+    }
+    return view('admin.notifications.index');
+})->name('admin.notifications');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 });

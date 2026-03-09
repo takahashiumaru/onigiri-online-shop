@@ -45,7 +45,7 @@
                     <div class="card-header"><h6 class="fw-bold mb-0"><i class="bi bi-credit-card me-2"></i>Metode Pembayaran</h6></div>
                     <div class="card-body">
                         <div class="d-flex align-items-center p-3 rounded-3 border" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Midtrans.svg/200px-Midtrans.svg.png" alt="Midtrans" height="28" class="me-3">
+                            <img src="https://midtrans.com/assets/img/ico.png" alt="Midtrans" height="28" class="me-3">
                             <div>
                                 <div class="fw-semibold">Midtrans Payment Gateway</div>
                                 <small class="text-muted">QRIS, Transfer Bank, Kartu Kredit, Gopay, OVO, Dana, dan lainnya</small>

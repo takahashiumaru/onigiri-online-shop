@@ -57,7 +57,17 @@
             <div class="row g-4">
                 @foreach($products as $product)
                 <div class="col-sm-6 col-xl-4">
-                    <div class="product-card h-100">
+                    <div class="product-card h-100 js-product-card"
+                         role="button"
+                         style="cursor: pointer;"
+                         data-id="{{ $product->id }}"
+                         data-name="{{ $product->name }}"
+                         data-description="{{ $product->description }}"
+                         data-price="{{ number_format($product->price, 0, ',', '.') }}"
+                         data-price-raw="{{ $product->price }}"
+                         data-stock="{{ $product->stock }}"
+                         data-category="{{ $product->category }}"
+                         data-image="{{ ($product->image && \Storage::disk('public')->exists($product->image)) ? Storage::url($product->image) : '' }}">
                         <div class="position-relative">
                             @if($product->image && \Storage::disk('public')->exists($product->image))
                                 <img src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}">
@@ -109,4 +119,6 @@
         </div>
     </div>
 </div>
+{{-- include product detail modal so clicking cards can open it --}}
+@include('customer.partials.product-modal')
 @endsection

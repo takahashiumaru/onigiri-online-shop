@@ -6,35 +6,73 @@
 <!-- Hero -->
 <section class="hero-section">
     <div class="container">
+        <!-- page-specific responsive tweaks -->
+        <style>
+        /* Mobile-friendly hero and product adjustments */
+        @media (max-width: 767.98px) {
+          .hero-section { padding: 28px 0; }
+          .hero-section .display-4 { font-size: 1.75rem; line-height:1.15; }
+          .hero-section .lead { font-size: .95rem; }
+          .hero-section .d-flex.gap-3.flex-wrap { flex-direction: column; gap: .6rem; }
+          .hero-section .display-4 span { color: #F4A261; }
+
+          /* product card images shorter on mobile */
+          .product-card .img-wrap,
+          .product-card .card-img-top,
+          .product-card img { height: 140px; }
+
+          .product-card .card-body { padding: .75rem; }
+          .product-card .product-title { font-size: .95rem; }
+
+          /* make action buttons full width on phone */
+          .product-card .btn-sm.w-100-on-mobile { display:block; width:100%; }
+          .product-card .btn-sm.w-100-on-mobile + .btn-sm { margin-top: .5rem; }
+
+          /* tighten hero stats */
+          .hero-section .fw-bold.fs-5 { font-size: 1rem; }
+        }
+
+        /* small tablets */
+        @media (min-width: 768px) and (max-width: 991.98px) {
+          .product-card .img-wrap,
+          .product-card .card-img-top,
+          .product-card img { height: 180px; }
+        }
+
+        /* keep desktop appearance unchanged but ensure buttons not too large */
+        .product-card .btn-sm { padding-top: .38rem; padding-bottom: .38rem; }
+        </style>
+
         <div class="row align-items-center">
             <div class="col-lg-6">
                 <span class="badge bg-warning text-dark mb-3 px-3 py-2">🆕 Menu Terbaru</span>
                 <h1 class="display-4 fw-bold mb-3">Onigiri Segar<br><span style="color: #F4A261;">Setiap Hari!</span></h1>
-                <p class="lead mb-4" style="color: rgba(255,255,255,0.8);">
+                <p class="lead mb-4" style="color: rgba(0, 0, 0, 0.8);">
                     Nasi kepal Jepang autentik dengan beragam isian lezat. Dibuat fresh setiap hari dengan bahan pilihan terbaik.
                 </p>
-                <div class="d-flex gap-3 flex-wrap">
-                    <a href="{{ route('products') }}" class="btn btn-warning btn-lg fw-bold px-4">
+                <!-- CTAs: stack on mobile -->
+                <div class="d-flex gap-3 flex-column flex-sm-row">
+                    <a href="{{ route('products') }}" class="btn btn-warning btn-lg fw-bold px-4 w-100 w-sm-auto">
                         <i class="bi bi-grid me-2"></i>Lihat Menu
                     </a>
                     @guest
-                    <a href="{{ route('register') }}" class="btn btn-outline-light btn-lg px-4">
+                    <a href="{{ route('register') }}" class="btn btn-outline-light btn-lg px-4 w-100 w-sm-auto">
                         Daftar Sekarang
                     </a>
                     @endguest
                 </div>
                 <div class="d-flex gap-4 mt-4">
                     <div>
-                        <div class="fw-bold fs-5 text-white">50+</div>
-                        <small style="color: rgba(255,255,255,0.6);">Menu Tersedia</small>
+                        <div class="fw-bold fs-5 text-black">10+</div>
+                        <small style="color: rgba(24, 24, 24, 0.6);">Menu Tersedia</small>
                     </div>
                     <div>
-                        <div class="fw-bold fs-5 text-white">1000+</div>
-                        <small style="color: rgba(255,255,255,0.6);">Pelanggan Happy</small>
+                        <div class="fw-bold fs-5 text-black">1000+</div>
+                        <small style="color: rgba(24, 24, 24, 0.6);">Pelanggan Happy</small>
                     </div>
                     <div>
                         <div class="fw-bold fs-5" style="color: #F4A261;">★ 4.9</div>
-                        <small style="color: rgba(255,255,255,0.6);">Rating</small>
+                        <small style="color: rgba(24, 24, 24, 0.6);">Rating</small>
                     </div>
                 </div>
             </div>
@@ -67,7 +105,17 @@
         <div class="row g-4">
             @foreach($featured as $product)
             <div class="col-sm-6 col-md-4 col-lg-4">
-                <div class="product-card">
+                <div class="product-card js-product-card"
+                     role="button"
+                     style="cursor: pointer;"
+                     data-id="{{ $product->id }}"
+                     data-name="{{ $product->name }}"
+                     data-description="{{ $product->description }}"
+                     data-price="{{ number_format($product->price, 0, ',', '.') }}"
+                     data-price-raw="{{ $product->price }}"
+                     data-stock="{{ $product->stock }}"
+                     data-category="{{ $product->category }}"
+                     data-image="{{ ($product->image && \Storage::disk('public')->exists($product->image)) ? Storage::url($product->image) : '' }}">
                     <div class="position-relative">
                         @if($product->image && \Storage::disk('public')->exists($product->image))
                             <img src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}" class="card-img-top">
@@ -89,10 +137,10 @@
                             @auth
                             @if(!auth()->user()->isAdmin())
                                 @if($product->isInStock())
-                                <form action="{{ route('cart.add', $product) }}" method="POST">
+                                <form action="{{ route('cart.add', $product) }}" method="POST" class="w-100 w-sm-auto d-sm-inline-block ms-sm-2">
                                     @csrf
                                     <input type="hidden" name="quantity" value="1">
-                                    <button class="btn btn-primary btn-sm px-3">
+                                    <button class="btn btn-primary btn-sm px-3 w-100-on-mobile">
                                         <i class="bi bi-bag-plus"></i>
                                     </button>
                                 </form>
@@ -101,7 +149,7 @@
                                 @endif
                             @endif
                             @else
-                            <a href="{{ route('login') }}" class="btn btn-primary btn-sm px-3">
+                            <a href="{{ route('login') }}" class="btn btn-primary btn-sm px-3 w-100-on-mobile">
                                 <i class="bi bi-bag-plus"></i>
                             </a>
                             @endauth
@@ -155,4 +203,6 @@
         </div>
     </div>
 </section>
+{{-- make modal available on home page as well --}}
+@include('customer.partials.product-modal')
 @endsection
