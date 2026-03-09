@@ -10,18 +10,10 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $featured = Product::where('is_available', true)
-            ->where('stock', '>', 0)
-            ->orderBy('created_at', 'desc')
-            ->take(6)
-            ->get();
+        // Ambil 5 produk terbaru dari database (gambar dari storage jika ada)
+        $products = Product::latest()->take(5)->get();
 
-        $categories = Product::where('is_available', true)
-            ->select('category')
-            ->distinct()
-            ->pluck('category');
-
-        return view('customer.home', compact('featured', 'categories'));
+        return view('customer.home', compact('products'));
     }
 
     public function products(Request $request)

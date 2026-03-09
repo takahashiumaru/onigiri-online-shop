@@ -23,13 +23,13 @@
                                 'shipping' => auth()->user()->orders()->where('status','shipping')->count(),
                                 'delivered' => auth()->user()->orders()->where('status','delivered')->count(),
                             ];
-                            // helper map untuk label & icon
+                            // helper map untuk label, icon & badge class
                             $statusMap = [
-                                'waiting_payment' => ['label'=>'Menunggu Pembayaran','icon'=>'bi-credit-card'],
-                                'waiting_confirmation' => ['label'=>'Menunggu Konfirmasi','icon'=>'bi-clock'],
-                                'processing' => ['label'=>'Pesanan Diproses','icon'=>'bi-arrow-repeat'],
-                                'shipping' => ['label'=>'Sedang Dikirim','icon'=>'bi-truck'],
-                                'delivered' => ['label'=>'Sampai Tujuan','icon'=>'bi-geo-alt'],
+                                'waiting_payment' => ['label'=>'Menunggu Pembayaran','icon'=>'bi-credit-card','badge'=>'bg-warning text-dark'],
+                                'waiting_confirmation' => ['label'=>'Menunggu Konfirmasi','icon'=>'bi-clock','badge'=>'bg-secondary'],
+                                'processing' => ['label'=>'Pesanan Diproses','icon'=>'bi-arrow-repeat','badge'=>'bg-primary'],
+                                'shipping' => ['label'=>'Sedang Dikirim','icon'=>'bi-truck','badge'=>'bg-info text-dark'],
+                                'delivered' => ['label'=>'Sampai Tujuan','icon'=>'bi-geo-alt','badge'=>'bg-success'],
                             ];
                         @endphp
 
@@ -66,19 +66,64 @@
                         @else
                             <ul class="list-group">
                                 @foreach($orders as $order)
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <div class="fw-semibold">#{{ $order->id }} — {{ $order->total_formatted ?? (isset($order->total) ? 'Rp '.number_format($order->total,0,',','.') : '') }}</div>
-                                            <div class="small text-muted">
-                                                {{ \Carbon\Carbon::parse($order->created_at)->diffForHumans() }} ·
-                                                {{ $statusMap[$order->status]['label'] ?? ucfirst($order->status) }}
+                                    @php
+                                        // determine items count safely
+                                        $itemsCount = $order->items_count ?? (isset($order->items) ? count($order->items) : null);
+                                        $totalText = $order->total_formatted ?? (isset($order->total) ? 'Rp '.number_format($order->total,0,',','.') : '');
+                                        $statusKey = $order->status;
+
+                                        // CHANGED: ensure statusMeta always has icon, label and badge
+                                        $defaultMeta = ['label'=>ucfirst($statusKey),'icon'=>'bi-bell','badge'=>'bg-light text-dark'];
+                                        $statusMeta = array_merge($defaultMeta, $statusMap[$statusKey] ?? []);
+
+                                        $createdExact = \Carbon\Carbon::parse($order->created_at)->format('d M Y H:i');
+                                    @endphp
+
+                                    <li class="list-group-item">
+                                        <div class="d-flex align-items-start">
+                                            <div class="me-3">
+                                                <div class="rounded-circle d-flex align-items-center justify-content-center bg-light" style="width:44px;height:44px;">
+                                                    <i class="{{ $statusMeta['icon'] }} fs-5" style="color:var(--brand)"></i>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="text-end">
-                                            <a href="{{ route('orders.show', $order) }}" class="btn btn-outline-primary btn-sm">Lihat</a>
-                                            @if(!in_array($order->status, ['delivered','cancelled']))
-                                                <div class="mt-1 small text-muted">Status: <span class="fw-semibold">{{ $statusMap[$order->status]['label'] ?? $order->status }}</span></div>
-                                            @endif
+
+                                            <div class="flex-grow-1">
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <div>
+                                                        <div class="fw-semibold">#{{ $order->id }} &middot; <span class="text-muted small">{{ $totalText }}</span></div>
+                                                        <div class="small text-muted mt-1">
+                                                            @if($itemsCount !== null)
+                                                                {{ $itemsCount }} item ·
+                                                            @endif
+                                                            {{ $createdExact }} · {{ \Carbon\Carbon::parse($order->created_at)->diffForHumans() }}
+                                                            @if(!empty($order->tracking_number))
+                                                                · No. Resi: <span class="text-monospace">{{ $order->tracking_number }}</span>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="text-end ms-3">
+                                                        <span class="badge {{ $statusMeta['badge'] }} mb-2">{{ $statusMeta['label'] }}</span>
+                                                        <div>
+                                                            <a href="{{ route('orders.show', $order) }}" class="btn btn-outline-primary btn-sm">Lihat</a>
+
+                                                            @if($statusKey === 'waiting_payment')
+                                                                <a href="{{ route('orders.show', $order) }}?action=pay" class="btn btn-success btn-sm ms-1">Bayar Sekarang</a>
+                                                            @elseif($statusKey === 'waiting_confirmation')
+                                                                <a href="{{ route('orders.show', $order) }}?action=upload" class="btn btn-warning btn-sm ms-1">Unggah Bukti</a>
+                                                            @elseif($statusKey === 'shipping')
+                                                                <a href="{{ route('orders.show', $order) }}?action=track" class="btn btn-info btn-sm ms-1">Lacak</a>
+                                                            @elseif($statusKey === 'delivered')
+                                                                <a href="{{ route('orders.show', $order) }}?action=review" class="btn btn-outline-success btn-sm ms-1">Ulas</a>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                @if(!in_array($order->status, ['delivered','cancelled']))
+                                                    <div class="mt-2 small text-muted">Status: <span class="fw-semibold">{{ $statusMeta['label'] }}</span></div>
+                                                @endif
+                                            </div>
                                         </div>
                                     </li>
                                 @endforeach

@@ -3,33 +3,82 @@
 @section('title', 'Profil Saya')
 
 @section('content')
-<div class="container section">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card surface">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Profil Saya</h5>
-                    <a href="{{ route('profile.edit') }}" class="btn btn-outline-primary btn-sm">Edit Profil</a>
-                </div>
-                <div class="card-body d-flex gap-3 align-items-center">
+<div class="container section-lg">
+    <div class="row g-4">
+        {{-- Sidebar --}}
+        <div class="col-lg-4">
+            <div class="tp-card text-center">
+                <div class="tp-card-body" style="padding:32px 20px;">
                     @if($user->avatar)
-                        <img src="{{ asset('storage/'.$user->avatar) }}" alt="Avatar" class="rounded-circle" style="width:96px;height:96px;object-fit:cover;">
+                        <img src="{{ asset('storage/'.$user->avatar) }}" alt="Avatar"
+                             class="rounded-circle mb-3"
+                             style="width:100px;height:100px;object-fit:cover;border:3px solid var(--brand-light);">
                     @else
-                        <div class="avatar-circle" style="width:96px;height:96px;font-size:2rem;">
+                        <div class="tp-avatar mx-auto mb-3" style="width:100px;height:100px;font-size:2.5rem;">
                             {{ strtoupper(substr($user->name,0,1)) }}
                         </div>
                     @endif
+                    <h5 class="mb-1" style="font-weight:700;">{{ $user->name }}</h5>
+                    <p class="text-muted small mb-3">Bergabung {{ $user->created_at->format('d M Y') }}</p>
+                    <a href="{{ route('profile.edit') }}" class="btn btn-outline-primary btn-sm w-100">
+                        <i class="bi bi-pencil-square me-1"></i> Edit Profil
+                    </a>
+                </div>
+            </div>
+        </div>
 
-                    <div>
-                        <p class="mb-1"><strong>Nama:</strong> {{ $user->name }}</p>
-                        <p class="mb-1"><strong>Email:</strong> {{ $user->email }}</p>
-                        @if($user->phone)
-                            <p class="mb-1"><strong>No. HP:</strong> {{ $user->phone }}</p>
-                        @endif
-                        @if($user->address)
-                            <p class="mb-3"><strong>Alamat:</strong> <small class="text-muted">{{ nl2br(e($user->address)) }}</small></p>
-                        @endif
-                        <p class="text-muted small mb-0">Bergabung: {{ $user->created_at->format('d M Y') }}</p>
+        {{-- Main info --}}
+        <div class="col-lg-8">
+            <div class="tp-card">
+                <div class="tp-card-header">
+                    <h6 class="mb-0" style="font-weight:700;">Informasi Pribadi</h6>
+                </div>
+                <div class="tp-card-body">
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <label class="form-label">Nama Lengkap</label>
+                            <p class="mb-0" style="font-weight:500;">{{ $user->name }}</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label">Email</label>
+                            <p class="mb-0" style="font-weight:500;">{{ $user->email }}</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label">No. Handphone</label>
+                            <p class="mb-0" style="font-weight:500;">{{ $user->phone ?: '-' }}</p>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Alamat</label>
+                            <p class="mb-0" style="font-weight:500;">{!! $user->address ? nl2br(e($user->address)) : '-' !!}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Quick stats --}}
+            <div class="row g-3 mt-1">
+                <div class="col-4">
+                    <div class="tp-card text-center" style="padding:20px 12px;">
+                        <div style="font-size:1.5rem;font-weight:800;color:var(--brand);">
+                            {{ $user->orders()->count() }}
+                        </div>
+                        <div class="text-muted" style="font-size:.78rem;">Total Pesanan</div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="tp-card text-center" style="padding:20px 12px;">
+                        <div style="font-size:1.5rem;font-weight:800;color:var(--brand);">
+                            {{ $user->orders()->where('status','completed')->count() }}
+                        </div>
+                        <div class="text-muted" style="font-size:.78rem;">Selesai</div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="tp-card text-center" style="padding:20px 12px;">
+                        <div style="font-size:1.5rem;font-weight:800;color:var(--brand);">
+                            {{ $user->orders()->whereIn('status',['waiting_payment','processing','shipping'])->count() }}
+                        </div>
+                        <div class="text-muted" style="font-size:.78rem;">Aktif</div>
                     </div>
                 </div>
             </div>
