@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Keranjang — Onigiri Shop')
+@section('title', 'Keranjang — Suki Onigiri')
 
 @section('content')
 <div class="container section-lg">

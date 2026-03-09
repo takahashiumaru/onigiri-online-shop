@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Onigiri Shop — Onigiri Segar & Lezat')
+@section('title', 'Suki Onigiri — Onigiri Segar & Lezat')
 
 @section('content')
 {{-- Hero --}}
@@ -8,12 +8,12 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-7">
-                <p class="text-muted mb-2" style="font-size:.85rem;font-weight:500;">🍙 #1 Onigiri Shop di Indonesia</p>
+                <p class="text-muted mb-2" style="font-size:.85rem;font-weight:500;">🍙 #1 Suki Onigiri di Indonesia</p>
                 <h1 style="font-weight:800;font-size:clamp(1.8rem,4vw,2.8rem);line-height:1.2;">
                     Onigiri Segar <span style="color:var(--brand);">Setiap Hari</span>
                 </h1>
                 <p class="text-muted mt-3 mb-4" style="max-width:480px;font-size:.95rem;">
-                    Dibuat dari bahan premium dengan resep autentik Jepang. Pesan sekarang, nikmati kelezatannya.
+                    Solusi praktis dan lezat untuk kantin sekolah, event, dan pemesanan dalam jumlah besar.
                 </p>
                 <div class="d-flex gap-2 flex-wrap">
                     <a href="{{ route('products') }}" class="btn btn-primary btn-lg">

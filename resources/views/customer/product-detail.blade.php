@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', isset($product) ? $product->name . ' — Onigiri Shop' : 'Produk — Onigiri Shop')
+@section('title', isset($product) ? $product->name . ' — Suki Onigiri' : 'Produk — Suki Onigiri')
 
 @section('content')
 <section class="section-lg">

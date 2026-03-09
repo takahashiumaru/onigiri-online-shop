@@ -35,6 +35,6 @@ class RegisterController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route('home')->with('success', 'Selamat datang di Onigiri Shop!');
+        return redirect()->route('home')->with('success', 'Selamat datang di Suki Onigiri!');
     }
 }

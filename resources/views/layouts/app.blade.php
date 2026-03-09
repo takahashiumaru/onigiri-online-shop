@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Onigiri Shop') 🍙</title>
+    <title>@yield('title', 'Suki Onigiri') 🍙</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -671,7 +671,7 @@
 
             {{-- Desktop navbar --}}
             <div class="container tp-navbar-main tp-navbar-desktop" style="display:none;">
-                <a class="tp-brand" href="{{ route('home') }}">🍙 <span>Onigiri</span>Shop</a>
+                <a class="tp-brand" href="{{ route('home') }}">🍙 <span>Suki</span>Onigiri</a>
 
                 <a href="{{ route('products') }}" class="tp-category-btn">
                     <i class="bi bi-grid"></i> Kategori
@@ -793,7 +793,7 @@
             <div class="container">
                 <div class="row g-4">
                     <div class="col-6 col-md-3">
-                        <h6>OnigiriShop</h6>
+                        <h6>SukiOnigiri</h6>
                         <ul>
                             <li><a href="{{ route('home') }}">Tentang Kami</a></li>
                             <li><a href="{{ route('products') }}">Semua Menu</a></li>
@@ -825,7 +825,7 @@
                     </div>
                 </div>
                 <div class="tp-footer-bottom">
-                    © {{ date('Y') }} OnigiriShop. All rights reserved.
+                    © {{ date('Y') }} SukiOnigiri. All rights reserved.
                 </div>
             </div>
         </footer>
@@ -834,7 +834,7 @@
     <!-- ============ MOBILE OFFCANVAS ============ -->
     <div class="offcanvas offcanvas-end tp-offcanvas" tabindex="-1" id="mobileMenu">
         <div class="offcanvas-header">
-            <h6 class="offcanvas-title mb-0">🍙 OnigiriShop</h6>
+            <h6 class="offcanvas-title mb-0">🍙 SukiOnigiri</h6>
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
         </div>
         <div class="offcanvas-body p-0" style="padding:16px 20px !important;">

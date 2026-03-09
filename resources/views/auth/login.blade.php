@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Masuk — Onigiri Shop')
+@section('title', 'Masuk — Suki Onigiri')
 
 @section('content')
 <div class="container section-lg">
@@ -8,7 +8,7 @@
         <div class="col-sm-10 col-md-7 col-lg-5 col-xl-4">
             <div class="text-center mb-4">
                 <div style="font-size:3rem;">🍙</div>
-                <h4 style="font-weight:800;">Masuk ke OnigiriShop</h4>
+                <h4 style="font-weight:800;">Masuk ke Suki Onigiri</h4>
                 <p class="text-muted small">Belanja onigiri jadi lebih mudah</p>
             </div>
 

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $product->name . ' — Onigiri Shop')
+@section('title', $product->name . ' — Suki Onigiri')
 
 @section('content')
 <div class="container section-lg">
