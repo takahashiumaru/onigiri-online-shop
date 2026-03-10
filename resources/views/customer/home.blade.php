@@ -330,5 +330,6 @@
         @endif
     </div>
 </section>
+
 @include('customer.partials.product-modal')
 @endsection

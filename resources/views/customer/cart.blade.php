@@ -14,8 +14,7 @@
     </div>
     @else
     <style>
-        /* Responsive cart layout */
-        :root { --tp-green: #00b14f; --tp-green-soft: #e7f7ee; }
+        /* Responsive cart layout (gunakan palette global --brand / --brand-600 / --brand-light) */
         .cart-item { gap: 1rem; align-items: center; }
         .item-image img,
         .item-image .placeholder {
@@ -44,9 +43,9 @@
             .order-summary { position: static; top: auto; }
             .card .card-header .fw-semibold { font-size: .95rem; }
         }
-        /* Tokopedia-like accents */
-        .tp-accent { background: var(--tp-green); border-color: var(--tp-green); color: #fff; }
-        .tp-badge { background: var(--tp-green-soft); color: var(--tp-green); padding: .25rem .5rem; border-radius: 999px; font-size: .8rem; }
+        /* Accent menggunakan palette merah global */
+        .tp-accent { background: var(--brand); border-color: var(--brand); color: #fff; }
+        .tp-badge { background: var(--brand-light); color: var(--brand); padding: .25rem .5rem; border-radius: 999px; font-size: .8rem; }
     </style>
     <div class="row g-4">
         <div class="col-lg-8">
@@ -68,7 +67,7 @@
                                 @if($item->product->image && \Storage::disk('public')->exists($item->product->image))
                                     <img src="{{ Storage::url($item->product->image) }}" alt="{{ $item->product->name }}">
                                 @else
-                                    <div class="placeholder d-flex align-items-center justify-content-center" style="background: #fff5f5; font-size: 2.5rem;">🍙</div>
+                                    <div class="placeholder d-flex align-items-center justify-content-center" style="background: var(--brand-light); font-size: 2.5rem;">🍙</div>
                                 @endif
                             </div>
                         </div>
@@ -78,7 +77,7 @@
                                 <small class="text-muted">{{ ucfirst($item->product->category) }}</small>
                                 <span class="tp-badge">Penjual • Toko</span>
                             </div>
-                            <div class="fw-semibold" style="color:var(--tp-green);">Rp {{ number_format($item->product->price, 0, ',', '.') }}</div>
+                            <div class="fw-semibold" style="color:var(--brand-600);">Rp {{ number_format($item->product->price, 0, ',', '.') }}</div>
                             <div class="text-muted small">Rp {{ number_format($item->product->price * $item->quantity,0,',','.') }} subtotal</div>
                         </div>
                         <div class="d-flex align-items-center gap-2 item-controls">
@@ -120,7 +119,7 @@
                     <hr>
                     <div class="d-flex justify-content-between mb-3">
                         <span class="fw-bold">Total</span>
-                        <span class="fw-bold fs-5" style="color:var(--tp-green);">Rp {{ number_format($total + 10000, 0, ',', '.') }}</span>
+                        <span class="fw-bold fs-5" style="color:var(--brand-600);">Rp {{ number_format($total + 10000, 0, ',', '.') }}</span>
                     </div>
                     <a href="{{ route('checkout.index') }}" class="btn tp-accent w-100 py-2">
                         <i class="bi bi-credit-card me-2"></i>Checkout Sekarang

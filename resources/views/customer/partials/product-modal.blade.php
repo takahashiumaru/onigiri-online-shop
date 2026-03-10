@@ -20,8 +20,8 @@
             <p id="modalDescription" class="text-muted mb-3"></p>
 
             <div class="d-flex align-items-center gap-3 mb-3">
-              <div id="modalPrice" class="fs-3 fw-bold" style="color:#00a859;"></div>
-              <div><span id="modalStock" class="badge bg-success"></span></div>
+              <div id="modalPrice" class="fs-3 fw-bold" style="color:var(--brand-600);"></div>
+              <div><span id="modalStock" class="badge bg-danger"></span></div>
             </div>
 
             <div class="d-flex align-items-center gap-4 mb-3">
@@ -48,7 +48,7 @@
               <form id="modalAddForm" method="POST" style="display:inline-flex; align-items:center;">
                 @csrf
                 <input type="hidden" name="quantity" value="1" id="modalQuantityHidden">
-                <button id="modalAddBtn" type="submit" class="btn btn-success btn-lg d-flex align-items-center" style="background:#00a859; border-color:#00a859; border-radius:12px; padding:12px 22px;">
+                <button id="modalAddBtn" type="submit" class="btn btn-primary btn-lg d-flex align-items-center" style="border-radius:12px; padding:12px 22px;">
                   <i class="bi bi-bag-plus me-2"></i>
                   <span class="fw-bold">Tambah ke Keranjang</span>
                 </button>
@@ -175,13 +175,14 @@ document.addEventListener('DOMContentLoaded', function () {
       modalCategory.textContent = category ? category.charAt(0).toUpperCase() + category.slice(1) : '';
       modalDescription.textContent = description;
       modalPrice.textContent = formatCurrency(priceRaw);
+      modalPrice.style.color = getComputedStyle(document.documentElement).getPropertyValue('--brand-600') || 'var(--brand-600)';
       modalStock.textContent = (stock > 0) ? ('Sisa ' + stock) : 'Habis';
       if (stock === 0) {
-        modalStock.classList.remove('bg-success');
+        modalStock.classList.remove('bg-danger');
         modalStock.classList.add('bg-secondary');
       } else {
         modalStock.classList.remove('bg-secondary');
-        modalStock.classList.add('bg-success');
+        modalStock.classList.add('bg-danger');
       }
 
       // set modal image:

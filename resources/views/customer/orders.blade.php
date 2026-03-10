@@ -59,11 +59,12 @@
     <!-- Improved segmented tabs (Tokopedia-like) -->
     @php $tab = request('tab', 'all'); $baseQuery = request()->except('tab','page'); @endphp
     <style>
-    :root { --tp-green: #00b14f; --tp-green-soft: #e7f7ee; --tp-muted: #6b7280; }
+    :root { --tp-muted: #6b7280; }
     /* Tabs / pills */
     .orders-tabs { display:flex; gap:.5rem; flex-wrap:wrap; margin-bottom:1rem; }
     .orders-tabs a { padding:.45rem .7rem; border-radius:999px; font-size:.88rem; display:inline-flex; align-items:center; gap:.5rem; text-decoration:none; }
-    .orders-tabs .active { background:var(--tp-green-soft); border:1px solid rgba(0,177,79,0.18); color:var(--tp-green); box-shadow:0 2px 8px rgba(0,177,79,0.06); }
+    /* gunakan palette global untuk border / shadow warna aktif */
+    .orders-tabs .active { background:var(--brand-light); border:1px solid rgba(var(--brand-rgb),0.18); color:var(--brand); box-shadow:0 2px 8px rgba(var(--brand-rgb),0.06); }
     .orders-tabs .inactive { background:transparent; border:1px solid rgba(0,0,0,0.06); color:#374151; }
 
     /* Order card - compact, Tokopedia-like */
@@ -72,14 +73,14 @@
     .compact-left { min-width:220px; max-width:36%; display:flex; flex-direction:column; gap:6px; }
     .order-num { font-weight:600; color:#111827; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:260px; }
     .order-meta { color:var(--tp-muted); font-size:.85rem; }
-    .tp-badge { background:var(--tp-green-soft); color:var(--tp-green); border-radius:999px; padding:.25rem .5rem; font-size:.75rem; }
+    .tp-badge { background:var(--brand-light); color:var(--brand); border-radius:999px; padding:.25rem .5rem; font-size:.75rem; }
     .compact-items { flex:1; display:flex; gap:0.75rem; color:var(--tp-muted); overflow:hidden; align-items:center; }
     .product-thumb { width:56px; height:56px; border-radius:8px; background:#f6f6f6; display:flex; align-items:center; justify-content:center; font-size:1.35rem; overflow:hidden; }
     .product-thumb img { width:100%; height:100%; object-fit:cover; display:block; border-radius:8px; }
     .product-info { min-width:0; }
     .compact-right { min-width:150px; text-align:right; display:flex; flex-direction:column; gap:6px; align-items:flex-end; }
-    .tp-accent { background:var(--tp-green); border-color:var(--tp-green); color:#fff; }
-    .tp-accent-outline { color:var(--tp-green); border-color:var(--tp-green); background:transparent; }
+    .tp-accent { background:var(--brand); border-color:var(--brand); color:#fff; }
+    .tp-accent-outline { color:var(--brand); border-color:var(--brand); background:transparent; }
     @media (max-width:767.98px) {
         .compact-order-card { flex-direction:column; align-items:flex-start; }
         .compact-left { max-width:100%; flex-direction:row; gap:12px; align-items:center; }
@@ -127,7 +128,6 @@
     .compact-order-card { display:flex; gap:1rem; align-items:center; padding:0.85rem; border-radius:12px; border:1px solid rgba(0,0,0,0.06); background:#fff; box-shadow:0 1px 4px rgba(22,28,37,0.03); transition:transform .08s, box-shadow .08s; }
     .compact-order-card:hover { transform:translateY(-2px); box-shadow:0 6px 18px rgba(22,28,37,0.06); }
     .compact-left { display:flex; gap:.75rem; align-items:center; min-width:0; }
-    .compact-left .meta { min-width:0; }
     .status-dot { width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:.45rem; }
     .compact-items { display:flex; gap:.75rem; color:#6b7280; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
     .compact-right { margin-left:auto; text-align:right; display:flex; flex-direction:column; gap:.35rem; align-items:flex-end; min-width:140px; }
@@ -181,9 +181,9 @@
 
                 <div class="compact-right">
                     <div class="text-muted small">Total</div>
-                    <div class="fw-bold" style="color:var(--tp-green);">Rp {{ number_format($order->total,0,',','.') }}</div>
+                    <div class="fw-bold" style="color:var(--brand);">Rp {{ number_format($order->total,0,',','.') }}</div>
                     <div class="mt-1 d-flex gap-2">
-                        <a href="{{ route('orders.show', $order) }}" class="btn btn-sm tp-accent-outline" style="border:1px solid var(--tp-green); border-radius:6px;">Detail</a>
+                        <a href="{{ route('orders.show', $order) }}" class="btn btn-sm tp-accent-outline" style="border:1px solid var(--brand); border-radius:6px;">Detail</a>
                         @if($order->payment_status === 'pending' && !empty($order->midtrans_snap_token))
                             <a href="{{ route('checkout.success', $order) }}" class="btn btn-sm tp-accent">Bayar</a>
                         @endif

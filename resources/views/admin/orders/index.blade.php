@@ -105,3 +105,9 @@
     @endif
 </div>
 @endsection
+
+<style>
+    /* gunakan palette global dari layouts */
+    .order-status.badge-success { background: var(--brand-light); color: var(--brand); }
+    .btn-approve { background: var(--brand); border-color: var(--brand); color: #fff; }
+</style>

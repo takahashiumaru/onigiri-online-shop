@@ -14,10 +14,13 @@
     <style>
         /* ========== DESIGN TOKENS ========== */
         :root {
-            --brand: #03AC0E;
-            --brand-hover: #029a0c;
-            --brand-light: #e8f8e9;
-            --brand-50: rgba(3,172,14,.06);
+            /* PALETTE: mudah diubah di sini */
+            --brand: #ef4444;                 /* primary red */
+            --brand-600: #dc2626;             /* hover / darker */
+            --brand-hover: var(--brand-600);
+            --brand-light: #fff1f2;           /* light red background */
+            --brand-rgb: 239,68,68;           /* used for rgba(...) */
+            --brand-50: rgba(var(--brand-rgb), .06);
 
             --bg: #f3f4f5;
             --surface: #ffffff;
@@ -27,7 +30,8 @@
             --text-tertiary: #9fa6b2;
             --border: #e5e7eb;
             --border-light: #f0f0f0;
-            --danger: #ef4444;
+            /* Danger / emphasis teks gelap untuk kontras */
+            --danger: #7f1d1d;
             --warning: #f59e0b;
             --info: #3b82f6;
 
@@ -156,7 +160,7 @@
         }
         .tp-search .form-control:focus {
             border-color: var(--brand);
-            box-shadow: 0 0 0 3px rgba(3,172,14,.1);
+            box-shadow: 0 0 0 3px rgba(var(--brand-rgb),.1);
         }
         .tp-search .btn-search {
             position: absolute;
@@ -202,7 +206,7 @@
         .tp-icon-btn .tp-badge {
             position: absolute;
             top: 2px; right: 2px;
-            background: var(--danger);
+            background: var(--brand);
             color: #fff;
             font-size: .6rem;
             font-weight: 700;
@@ -246,7 +250,7 @@
             font-weight: 700;
             font-size: .85rem;
             color: #fff;
-            background: linear-gradient(135deg, var(--brand), #02870b);
+            background: linear-gradient(135deg, var(--brand), var(--brand-600));
             flex-shrink: 0;
         }
         .tp-avatar img { width: 100%; height: 100%; object-fit: cover; }
@@ -276,7 +280,7 @@
             transition: background var(--transition);
         }
         .tp-dropdown .dropdown-item:hover { background: var(--brand-50); color: var(--brand); }
-        .tp-dropdown .dropdown-item.text-danger:hover { background: #fef2f2; }
+        .tp-dropdown .dropdown-item.text-danger:hover { background: var(--brand-light); color: var(--danger); }
         .tp-dropdown .dropdown-divider { border-color: var(--border-light); margin: 4px 0; }
 
         /* Auth buttons in navbar */
@@ -320,7 +324,7 @@
         .btn-primary:hover, .btn-primary:focus {
             background: var(--brand-hover);
             border-color: var(--brand-hover);
-            box-shadow: 0 4px 12px rgba(3,172,14,.25);
+            box-shadow: 0 4px 12px rgba(var(--brand-rgb),.25);
         }
         .btn-outline-primary {
             color: var(--brand);
@@ -361,7 +365,7 @@
         }
         .form-control:focus, .form-select:focus {
             border-color: var(--brand);
-            box-shadow: 0 0 0 3px rgba(3,172,14,.1);
+            box-shadow: 0 0 0 3px rgba(var(--brand-rgb),.1);
         }
         .form-label {
             font-size: .8rem;
@@ -507,8 +511,9 @@
             font-weight: 600;
         }
 
-        .badge-available { background: var(--brand-light); color: #065f46; }
-        .badge-unavailable { background: #fef2f2; color: #991b1b; }
+        .badge-available { background: var(--brand-light); color: var(--brand-600); }
+        /* ubah unavailable / cancelled ke rentang warna brand */
+        .badge-unavailable { background: var(--brand-light); color: var(--danger); }
 
         /* ========== HERO ========== */
         .hero-section {
@@ -525,8 +530,9 @@
             padding: 12px 16px;
             border: none;
         }
-        .alert-success { background: var(--brand-light); color: #065f46; }
-        .alert-danger { background: #fef2f2; color: #991b1b; }
+        .alert-success { background: var(--brand-light); color: var(--brand-600); }
+        /* alert-danger / negative messages use brand-light + danger text */
+        .alert-danger { background: var(--brand-light); color: var(--danger); }
         .alert-warning { background: #fffbeb; color: #92400e; }
         .alert-info { background: #eff6ff; color: #1e40af; }
 
@@ -543,8 +549,8 @@
         .status-waiting { background: #fffbeb; color: #92400e; }
         .status-processing { background: #eff6ff; color: #1e40af; }
         .status-shipping { background: #f0fdf4; color: #166534; }
-        .status-completed { background: var(--brand-light); color: #065f46; }
-        .status-cancelled { background: #fef2f2; color: #991b1b; }
+        .status-completed { background: var(--brand-light); color: var(--brand-600); }
+        .status-cancelled { background: var(--brand-light); color: var(--danger); }
 
         /* ========== FOOTER ========== */
         .tp-footer {
@@ -643,6 +649,9 @@
 
         /* ========== PAGE-SPECIFIC ========== */
         @yield('page-styles')
+        /* make bootstrap danger visuals use theme colors */
+        .text-danger { color: var(--danger) !important; }
+        .bg-danger { background-color: var(--brand) !important; color: #fff !important; }
     </style>
 
     @yield('styles')
