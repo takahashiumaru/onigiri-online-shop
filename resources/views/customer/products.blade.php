@@ -90,21 +90,27 @@
                             <p class="text-muted small flex-grow-1 mb-2" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{ $product->description }}</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="product-price">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
-                                @auth
-                                    @if(!auth()->user()->isAdmin())
-                                    @if($product->isInStock())
-                                    <form action="{{ route('cart.add', $product) }}" method="POST">
-                                        @csrf
-                                        <input type="hidden" name="quantity" value="1">
-                                        <button class="btn btn-primary btn-sm px-3"><i class="bi bi-bag-plus"></i> Beli</button>
-                                    </form>
-                                    @else
-                                    <span class="badge bg-secondary">Habis</span>
-                                    @endif
-                                    @endif
-                                @else
-                                <a href="{{ route('login') }}" class="btn btn-primary btn-sm px-3"><i class="bi bi-bag-plus"></i> Beli</a>
-                                @endauth
+                                @php $stat = $productStats[$product->id] ?? ['avg'=>null,'count'=>0]; @endphp
+                                <div class="ms-3 d-flex align-items-center">
+                                    @includeIf('customer.partials.rating', ['avg' => $stat['avg'], 'count' => $stat['count']])
+                                    <div class="ms-3">
+                                        @auth
+                                            @if(!auth()->user()->isAdmin())
+                                            @if($product->isInStock())
+                                            <form action="{{ route('cart.add', $product) }}" method="POST">
+                                                @csrf
+                                                <input type="hidden" name="quantity" value="1">
+                                                <button class="btn btn-primary btn-sm px-3"><i class="bi bi-bag-plus"></i> Beli</button>
+                                            </form>
+                                            @else
+                                            <span class="badge bg-secondary">Habis</span>
+                                            @endif
+                                            @endif
+                                        @else
+                                        <a href="{{ route('login') }}" class="btn btn-primary btn-sm px-3"><i class="bi bi-bag-plus"></i> Beli</a>
+                                        @endauth
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
