@@ -14,7 +14,17 @@
 
             <div class="tp-card">
                 <div class="tp-card-body" style="padding:28px;">
-                    <form method="POST" action="{{ route('register') }}">
+                    {{-- show general errors / flash --}}
+                    @if ($errors->any() || session('register'))
+                        <div class="alert alert-danger mb-3">
+                            @if(session('register')) {{ session('register') }} @endif
+                            @foreach ($errors->all() as $error)
+                                <div>{{ $error }}</div>
+                            @endforeach
+                        </div>
+                    @endif
+
+                    <form method="POST" action="{{ route('register.post') }}">
                         @csrf
                         <div class="mb-3">
                             <label class="form-label">Nama Lengkap</label>
@@ -28,10 +38,19 @@
                                    value="{{ old('email') }}" required placeholder="nama@email.com">
                             @error('email') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
+
+                        {{-- new phone input (required by controller) --}}
+                        <div class="mb-3">
+                            <label class="form-label">No. Telepon</label>
+                            <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror"
+                                   value="{{ old('phone') }}" required placeholder="08xxxxxxxxxx">
+                            @error('phone') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+
                         <div class="mb-3">
                             <label class="form-label">Password</label>
                             <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
-                                   required placeholder="Min 6 karakter">
+                                   required placeholder="Min 8 karakter">
                             @error('password') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
                         <div class="mb-4">

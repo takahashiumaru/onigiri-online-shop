@@ -7,7 +7,9 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rules\Password;
+use Exception;
 
 class RegisterController extends Controller
 {
@@ -20,21 +22,33 @@ class RegisterController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'phone' => ['required', 'string', 'max:20'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'phone' => ['required', 'string', 'max:20', 'unique:users,phone'],
             'password' => ['required', 'confirmed', Password::min(8)],
         ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'password' => Hash::make($request->password),
-            'role' => 'customer',
-        ]);
+        try {
+            DB::beginTransaction();
 
-        Auth::login($user);
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'password' => Hash::make($request->password),
+                'role' => 'customer',
+            ]);
 
-        return redirect()->route('home')->with('success', 'Selamat datang di Suki Onigiri!');
+            DB::commit();
+
+            Auth::login($user);
+
+            return redirect()->route('home')->with('success', 'Selamat datang di Suki Onigiri!');
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            return redirect()->back()
+                ->withInput($request->except('password', 'password_confirmation'))
+                ->withErrors(['register' => 'Pendaftaran gagal. Silakan coba lagi.']);
+        }
     }
 }

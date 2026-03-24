@@ -10,15 +10,22 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * Tambahkan field yang digunakan saat pendaftaran
+     */
     protected $fillable = [
         'name',
         'email',
-        'password',
         'phone',
-        'address',
+        'password',
         'role',
     ];
 
+    /**
+     * The attributes that should be hidden for arrays.
+     */
     protected $hidden = [
         'password',
         'remember_token',
