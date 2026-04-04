@@ -83,6 +83,13 @@ class HomeController extends Controller
             ->orderByDesc('updated_at')
             ->get();
 
-        return view('customer.product-detail', compact('product', 'reviews'));
+        // hitung statistik terjual (total quantity dari order yang tidak pending/cancelled/expired)
+        $soldCount = OrderItem::where('product_id', $product->id)
+            ->whereHas('order', function ($q) {
+                $q->whereIn('status', ['paid', 'confirmed', 'shipped', 'delivered']);
+            })
+            ->sum('quantity');
+
+        return view('customer.product-detail', compact('product', 'reviews', 'soldCount'));
     }
 }

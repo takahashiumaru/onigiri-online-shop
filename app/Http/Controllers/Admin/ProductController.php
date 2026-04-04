@@ -128,6 +128,17 @@ class ProductController extends Controller
                 break;
         }
 
-        return back()->with('success', "Stok {$product->name} berhasil diperbarui! Stok sekarang: {$product->fresh()->stock}");
+        $freshStock = $product->fresh()->stock;
+        $message = "Stok {$product->name} diperbarui ke {$freshStock}";
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'new_stock' => $freshStock,
+                'message' => $message
+            ]);
+        }
+
+        return back()->with('success', $message);
     }
 }

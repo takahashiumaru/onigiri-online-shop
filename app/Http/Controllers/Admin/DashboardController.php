@@ -28,7 +28,7 @@ class DashboardController extends Controller
 
         $top_products = Product::withCount('orderItems')
             ->orderByDesc('order_items_count')
-            ->take(5)
+            ->take(3)
             ->get();
 
         return view('admin.dashboard', compact('stats', 'recent_orders', 'top_products'));

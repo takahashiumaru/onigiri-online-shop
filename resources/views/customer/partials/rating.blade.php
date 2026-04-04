@@ -5,13 +5,9 @@ $isRated = $avgValue > 0;
 @endphp
 
 <div class="rating-component d-flex align-items-center" title="Rating: {{ number_format($avgValue,1) }} / 5">
-    {{-- hanya satu ikon bintang --}}
-    <i class="bi {{ $isRated ? 'bi-star-fill' : 'bi-star' }} star-single {{ $isRated ? 'star-selected' : '' }}" aria-hidden="true" style="font-size:1rem;line-height:1;"></i>
-
-    {{-- tampilkan angka rata-rata (atau 0 jika belum ada) dan jumlah ulasan --}}
-    <small class="text-muted ms-2" style="font-size:.9rem;">
-        {{ $isRated ? number_format($avgValue,1) : '0' }} ({{ $countValue }})
-    </small>
+    <i class="bi {{ $isRated ? 'bi-star-fill' : 'bi-star' }} star-single {{ $isRated ? 'star-selected' : '' }}" aria-hidden="true" style="font-size:0.9rem; line-height:1;"></i>
+    <span class="ms-1 fw-semibold text-dark" style="font-size: 0.85rem;">{{ $isRated ? number_format($avgValue,1) : '0' }}</span>
+    <span class="text-muted ms-1" style="font-size: 0.75rem;">({{ $countValue }})</span>
 </div>
 
 <style>

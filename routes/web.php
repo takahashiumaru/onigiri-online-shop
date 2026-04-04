@@ -45,6 +45,7 @@ Route::middleware(['auth', 'customer'])->group(function () {
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
     Route::get('/checkout/success/{order}', [CheckoutController::class, 'success'])->name('checkout.success');
+    Route::post('/checkout/regenerate/{order}', [CheckoutController::class, 'regenerateToken'])->name('checkout.regenerate');
 
     // Orders
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');

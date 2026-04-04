@@ -142,9 +142,21 @@
 
                 @if($order->payment_status === 'pending' && $order->midtrans_snap_token)
                 <div class="card-footer">
-                    <a href="{{ route('checkout.success', $order) }}" class="btn btn-primary w-100">
+                    <a href="{{ route('checkout.success', $order) }}" class="btn btn-primary w-100 mb-2">
                         <i class="bi bi-credit-card me-2"></i>Selesaikan Pembayaran
                     </a>
+                </div>
+                @endif
+
+                @if(in_array($order->status, ['pending', 'processing']))
+                <div class="card-footer border-top-0 pt-0">
+                    <form action="{{ route('orders.cancel', $order) }}" method="POST" id="cancelOrderForm">
+                        @csrf
+                        @method('PATCH')
+                        <button type="submit" class="btn btn-outline-danger w-100">
+                            <i class="bi bi-x-circle me-2"></i>Batalkan Pesanan
+                        </button>
+                    </form>
                 </div>
                 @endif
             </div>
@@ -154,12 +166,43 @@
 @endsection
 
 @section('scripts')
+    <!-- SweetAlert2 for premium confirmation popups -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // helper to get CSRF token
+        // CSRF Token
         const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 
-        // sendRating tetap dipanggil hanya dari tombol "Simpan"
+        // -- Cancellation Handler --
+        const cancelForm = document.getElementById('cancelOrderForm');
+        if (cancelForm) {
+            cancelForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                Swal.fire({
+                    title: 'Batalkan Pesanan?',
+                    text: "Pesanan yang dibatalkan tidak dapat dikembalikan, namun stok barang akan otomatis bertambah kembali.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ef4444', // brand red
+                    cancelButtonColor: '#6b7280', // muted gray
+                    confirmButtonText: 'Ya, Batalkan',
+                    cancelButtonText: 'Kembali',
+                    reverseButtons: true,
+                    customClass: {
+                        popup: 'rounded-4 border-0',
+                        confirmButton: 'px-4 py-2 fw-bold',
+                        cancelButton: 'px-4 py-2 fw-bold'
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.submit(); // submit form manually
+                    }
+                });
+            });
+        }
+
+        // -- Rating / Review Logic (Existing) --
         function sendRating(itemId, rating, review, btn) {
             const url = "{{ url('/order-items') }}/" + itemId + "/rating";
             if (btn) btn.disabled = true;

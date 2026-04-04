@@ -41,68 +41,34 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
     @php
-        // Normalize incoming $orders into a collection for grouping (works with Paginator or Collection)
-        if ($orders instanceof \Illuminate\Pagination\LengthAwarePaginator || $orders instanceof \Illuminate\Pagination\Paginator) {
-            $ordersCollection = collect($orders->items());
-        } else {
-            $ordersCollection = collect($orders);
-        }
-
-        $waitingStatuses = ['pending','processing'];
-        $waiting   = $ordersCollection->filter(fn($o) => in_array($o->status, $waitingStatuses));
-        $inDelivery = $ordersCollection->filter(fn($o) => $o->status === 'shipped');
-        $completed  = $ordersCollection->filter(fn($o) => $o->status === 'delivered');
-        $cancelled  = $ordersCollection->filter(fn($o) => $o->status === 'cancelled');
-        $totalCount = $ordersCollection->count();
+        $totalCount = $counts['all'] ?? 0;
+        $tab = request('tab', 'all');
+        $baseQuery = request()->except('tab','page');
     @endphp
 
-    <!-- Improved segmented tabs (Tokopedia-like) -->
-    @php $tab = request('tab', 'all'); $baseQuery = request()->except('tab','page'); @endphp
     <style>
     :root { --tp-muted: #6b7280; }
     /* Tabs / pills */
     .orders-tabs { display:flex; gap:.5rem; flex-wrap:wrap; margin-bottom:1rem; }
     .orders-tabs a { padding:.45rem .7rem; border-radius:999px; font-size:.88rem; display:inline-flex; align-items:center; gap:.5rem; text-decoration:none; }
-    /* gunakan palette global untuk border / shadow warna aktif */
     .orders-tabs .active { background:var(--brand-light); border:1px solid rgba(var(--brand-rgb),0.18); color:var(--brand); box-shadow:0 2px 8px rgba(var(--brand-rgb),0.06); }
     .orders-tabs .inactive { background:transparent; border:1px solid rgba(0,0,0,0.06); color:#374151; }
-
-    /* Order card - compact, Tokopedia-like */
-    .compact-order-card { display:flex; gap:1rem; align-items:center; padding:12px; border-radius:10px; border:1px solid rgba(0,0,0,0.04); background:#fff; }
-    .compact-order-card:hover { box-shadow:0 8px 30px rgba(2,6,23,0.04); transform: translateY(-2px); }
-    .compact-left { min-width:220px; max-width:36%; display:flex; flex-direction:column; gap:6px; }
-    .order-num { font-weight:600; color:#111827; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:260px; }
-    .order-meta { color:var(--tp-muted); font-size:.85rem; }
-    .tp-badge { background:var(--brand-light); color:var(--brand); border-radius:999px; padding:.25rem .5rem; font-size:.75rem; }
-    .compact-items { flex:1; display:flex; gap:0.75rem; color:var(--tp-muted); overflow:hidden; align-items:center; }
-    .product-thumb { width:56px; height:56px; border-radius:8px; background:#f6f6f6; display:flex; align-items:center; justify-content:center; font-size:1.35rem; overflow:hidden; }
-    .product-thumb img { width:100%; height:100%; object-fit:cover; display:block; border-radius:8px; }
-    .product-info { min-width:0; }
-    .compact-right { min-width:150px; text-align:right; display:flex; flex-direction:column; gap:6px; align-items:flex-end; }
-    .tp-accent { background:var(--brand); border-color:var(--brand); color:#fff; }
-    .tp-accent-outline { color:var(--brand); border-color:var(--brand); background:transparent; }
-    @media (max-width:767.98px) {
-        .compact-order-card { flex-direction:column; align-items:flex-start; }
-        .compact-left { max-width:100%; flex-direction:row; gap:12px; align-items:center; }
-        .compact-right { width:100%; text-align:left; align-items:flex-start; }
-    }
     </style>
 
     <div class="orders-tabs">
         @php
-            $counts = [
-                'all' => $orders->total() ?? $orders->count(),
-                'waiting' => $orders->whereIn('status', ['pending','processing'])->count() ?? 0,
-                'shipping' => $orders->where('status','shipped')->count() ?? 0,
-                'done' => $orders->where('status','delivered')->count() ?? 0,
-                'cancelled' => $orders->where('status','cancelled')->count() ?? 0,
+            $tabChoices = [
+                'all' => 'Semua',
+                'waiting' => 'Menunggu',
+                'shipping' => 'Dalam Pengiriman',
+                'done' => 'Selesai',
+                'cancelled' => 'Dibatalkan'
             ];
-            $tabs = ['all'=>'Semua','waiting'=>'Menunggu','shipping'=>'Dalam Pengiriman','done'=>'Selesai','cancelled'=>'Dibatalkan'];
         @endphp
-        @foreach($tabs as $k=>$label)
+        @foreach($tabChoices as $k => $label)
             <a href="{{ route('orders.index', array_merge($baseQuery, ['tab'=>$k])) }}" class="{{ $tab === $k ? 'active' : 'inactive' }}">
                 <span>{{ $label }}</span>
-                <span class="badge bg-white text-dark ms-1" style="font-size:.75rem;">{{ $counts[$k] }}</span>
+                <span class="badge bg-white text-dark ms-1" style="font-size:.75rem;">{{ $counts[$k] ?? 0 }}</span>
             </a>
         @endforeach
     </div>
@@ -140,53 +106,76 @@
     </style>
 
     {{-- render orders (controller-filtered paginator) --}}
+    {{-- render orders (controller-filtered paginator) --}}
     @foreach($orders as $order)
         @php $firstItem = $order->items->first(); @endphp
-        <div class="card mb-3 border-0">
-            <div class="compact-order-card">
-                <div class="compact-left">
-                    <div class="d-flex align-items-center gap-2">
-                        <div class="tp-badge me-1">{{ \Illuminate\Support\Str::upper(substr($order->order_number,0,3)) }}</div>
-                        <div>
-                            <div class="order-num">{{ $order->order_number }}</div>
-                            <div class="order-meta">{{ \Carbon\Carbon::parse($order->created_at)->format('d M Y, H:i') }}</div>
+        <div class="card mb-3 border-0 shadow-sm rounded-4 bg-white overflow-hidden">
+            <div class="card-body p-3">
+                <div class="row align-items-center">
+                    {{-- 1. Left: Order Info (Slightly narrower) --}}
+                    <div class="col-md-2">
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <span class="badge bg-primary-subtle text-primary fw-bold" style="font-size: 0.65rem; border-radius: 4px;">ONI</span>
+                            <span class="fw-bold text-dark" style="font-size: 0.95rem;">{{ $order->order_number }}</span>
+                        </div>
+                        <div class="text-muted small mb-2" style="font-size: 0.8rem;">{{ \Carbon\Carbon::parse($order->created_at)->format('d M Y, H:i') }}</div>
+                        
+                        <div class="d-flex flex-wrap gap-2">
+                            @php
+                                $statusColors = [
+                                    'pending' => ['bg' => '#f8f9fa', 'text' => '#666'],
+                                    'processing' => ['bg' => '#eef2ff', 'text' => '#4f46e5'],
+                                    'shipped' => ['bg' => '#e0f2fe', 'text' => '#0369a1'],
+                                    'delivered' => ['bg' => '#fef2f2', 'text' => '#ef4444'],
+                                    'cancelled' => ['bg' => '#f3f4f6', 'text' => '#9ca3af'],
+                                ];
+                                $s = $statusColors[$order->status] ?? ['bg' => '#f8f9fa', 'text' => '#666'];
+                            @endphp
+                            <span class="badge rounded-pill px-3 py-1.5 fw-medium" style="font-size: 0.68rem; border: 1px solid rgba(0,0,0,0.03); background-color: {{ $s['bg'] }}; color: {{ $s['text'] }};">
+                                {{ $statusLabels[$order->status] ?? ucfirst($order->status) }}
+                            </span>
+                            <span class="badge rounded-pill px-3 py-1.5 fw-medium bg-light text-muted" style="font-size: 0.68rem; border: 1px solid rgba(0,0,0,0.03);">
+                                {{ $payLabels[$order->payment_status] ?? ucfirst($order->payment_status) }}
+                            </span>
                         </div>
                     </div>
-                    <div class="mt-2">
-                        <span class="tp-badge">{{ $statusLabels[$order->status] ?? ucfirst($order->status) }}</span>
-                        <span class="badge bg-light text-muted ms-1">{{ $payLabels[$order->payment_status] ?? ucfirst($order->payment_status) }}</span>
-                    </div>
-                </div>
 
-                <div class="compact-items">
-                    <div class="product-thumb">
-                        @if($firstItem && isset($firstItem->product) && $firstItem->product->image && \Storage::disk('public')->exists($firstItem->product->image))
-                            <img src="{{ \Storage::url($firstItem->product->image) }}" alt="{{ $firstItem->product_name ?? 'Produk' }}">
-                        @else
-                            🛍️
-                        @endif
-                    </div>
-                    <div class="product-info">
-                        <div style="font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:260px;">
-                            {{ $firstItem->product->name ?? $firstItem->product_name ?? 'Produk' }}
+                    {{-- 2. Middle: Items Info (Wider) --}}
+                    <div class="col-md-7 border-start" style="border-left: 2px solid #f8f9fa !important;">
+                        <div class="ms-md-4 d-flex align-items-center gap-3">
+                            <div class="product-img-box border rounded-4 overflow-hidden flex-shrink-0" style="width: 64px; height: 64px; background: #fcfcfc;">
+                                @if($firstItem && isset($firstItem->product) && $firstItem->product->image && \Storage::disk('public')->exists($firstItem->product->image))
+                                    <img src="{{ \Storage::url($firstItem->product->image) }}" class="w-100 h-100" style="object-fit: cover;" alt="">
+                                @else
+                                    <div class="w-100 h-100 d-flex align-items-center justify-content-center fs-3">🍙</div>
+                                @endif
+                            </div>
+                            <div class="product-text">
+                                <h6 class="fw-bold mb-1 text-dark" style="font-size: 0.95rem;">{{ $firstItem->product->name ?? $firstItem->product_name ?? 'Produk' }}</h6>
+                                <div class="text-muted small">
+                                    {{ $firstItem->quantity ?? 1 }} item · Rp {{ number_format($firstItem->price ?? ($order->total),0,',','.') }}
+                                </div>
+                                @if($order->items->count() > 1)
+                                    <div class="small mt-1 fw-bold" style="color: #ef4444; font-size: 0.8rem;">
+                                        +{{ $order->items->count() - 1 }} item lain
+                                    </div>
+                                @endif
+                            </div>
                         </div>
-                        <div class="text-muted small">
-                            {{ $firstItem->quantity ?? 1 }} item · Rp {{ number_format($firstItem->price ?? ($order->total),0,',','.') }}
-                        </div>
-                        @if($order->items->count() > 1)
-                            <div class="text-muted small mt-1">+{{ $order->items->count() - 1 }} item lain</div>
-                        @endif
                     </div>
-                </div>
 
-                <div class="compact-right">
-                    <div class="text-muted small">Total</div>
-                    <div class="fw-bold" style="color:var(--brand);">Rp {{ number_format($order->total,0,',','.') }}</div>
-                    <div class="mt-1 d-flex gap-2">
-                        <a href="{{ route('orders.show', $order) }}" class="btn btn-sm tp-accent-outline" style="border:1px solid var(--brand); border-radius:6px;">Detail</a>
-                        @if($order->payment_status === 'pending' && !empty($order->midtrans_snap_token))
-                            <a href="{{ route('checkout.success', $order) }}" class="btn btn-sm tp-accent">Bayar</a>
-                        @endif
+                    {{-- 3. Right: Total & Actions --}}
+                    <div class="col-md-3 text-end">
+                        <div class="mb-2">
+                            <span class="text-muted small d-block mb-0" style="font-size: 0.75rem;">Total Pesanan</span>
+                            <span class="fw-bold fs-5" style="color: #ef4444;">Rp {{ number_format($order->total, 0, ',', '.') }}</span>
+                        </div>
+                        <div class="d-flex gap-2 justify-content-end align-items-center">
+                            <a href="{{ route('orders.show', $order) }}" class="btn btn-sm px-3 rounded-3 text-muted fw-bold border bg-white" style="font-size: 0.8rem;">Detail</a>
+                            @if($order->payment_status === 'pending' && !empty($order->midtrans_snap_token))
+                                <a href="{{ route('checkout.success', $order) }}" class="btn btn-sm px-3 rounded-3 fw-bold shadow-sm" style="background-color: #ef4444; border-color: #ef4444; color: #fff; font-size: 0.8rem;">Bayar</a>
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>

@@ -13,6 +13,9 @@
         <a href="{{ route('products') }}" class="btn btn-primary mt-3 px-4">Mulai Belanja</a>
     </div>
     @else
+    @php
+        $totalQty = $cartItems->sum('quantity');
+    @endphp
     <style>
         /* Responsive cart layout (gunakan palette global --brand / --brand-600 / --brand-light) */
         .cart-item { gap: 1rem; align-items: center; }
@@ -27,7 +30,7 @@
         @media (min-width: 768px) {
             .item-image img,
             .item-image .placeholder { width: 80px; height: 80px; }
-            .quantity-input { width: 55px; }
+            .quantity-input { width: 75px; }
             .order-summary { top: 80px; position: sticky; }
         }
 
@@ -39,10 +42,15 @@
             .item-image .placeholder { width: 100%; height: 150px; }
             .item-details { width: 100%; margin-top: .5rem; }
             .item-controls { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-top: .5rem; gap: .5rem; }
-            .quantity-input { width: 70px; }
+            .quantity-input { width: 85px; }
             .order-summary { position: static; top: auto; }
             .card .card-header .fw-semibold { font-size: .95rem; }
         }
+        /* Hide spinner for number input */
+        .quantity-input::-webkit-outer-spin-button,
+        .quantity-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .quantity-input { -moz-appearance: textfield; }
+
         /* Accent menggunakan palette merah global */
         .tp-accent { background: var(--brand); border-color: var(--brand); color: #fff; }
         .tp-badge { background: var(--brand-light); color: var(--brand); padding: .25rem .5rem; border-radius: 999px; font-size: .8rem; }
@@ -121,7 +129,16 @@
                         <span class="fw-bold">Total</span>
                         <span class="fw-bold fs-5" style="color:var(--brand-600);">Rp {{ number_format($total + 10000, 0, ',', '.') }}</span>
                     </div>
-                    <a href="{{ route('checkout.index') }}" class="btn tp-accent w-100 py-2">
+
+                    @if($totalQty < 20)
+                    <div class="alert alert-warning py-2 mb-3 border-0" style="font-size: 0.85rem; background-color: #fff9db; color: #856404;">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>Minimal pembelian adalah 20 pcs. Kurang <strong>{{ 20 - $totalQty }} pcs</strong> lagi.
+                    </div>
+                    @endif
+
+                    <a href="{{ route('checkout.index') }}" 
+                       class="btn tp-accent w-100 py-2 {{ $totalQty < 10 ? 'disabled' : '' }}"
+                       @if($totalQty < 10) style="pointer-events: none; opacity: 0.6;" @endif>
                         <i class="bi bi-credit-card me-2"></i>Checkout Sekarang
                     </a>
                     <a href="{{ route('products') }}" class="btn btn-outline-secondary w-100 mt-2">
