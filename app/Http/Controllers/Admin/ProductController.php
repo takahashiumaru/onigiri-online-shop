@@ -23,7 +23,7 @@ class ProductController extends Controller
         }
 
         if ($request->stock === 'low') {
-            $query->where('stock', '<=', 5)->where('stock', '>', 0);
+            $query->where('stock', '<=', 20)->where('stock', '>', 0);
         } elseif ($request->stock === 'out') {
             $query->where('stock', 0);
         }

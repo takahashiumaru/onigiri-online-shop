@@ -18,7 +18,9 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'photo',
         'phone',
+        'address',
         'password',
         'role',
     ];
@@ -42,6 +44,11 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
+    }
+
+    public function isCourier(): bool
+    {
+        return $this->role === 'courier';
     }
 
     public function orders()

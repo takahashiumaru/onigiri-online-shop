@@ -1,6 +1,13 @@
 @extends('layouts.admin')
 @section('title', 'Detail Pesanan')
 
+@section('styles')
+<style>
+    .cursor-pointer { cursor: pointer; }
+    #imagePreviewModal .modal-body img { max-width: 95vw; max-height: 90vh; }
+</style>
+@endsection
+
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h5 class="fw-bold mb-0">📋 Detail Pesanan: {{ $order->order_number }}</h5>
@@ -105,11 +112,55 @@
                     <div>{{ $order->payment_method ?? 'Belum dibayar' }}</div>
                 </div>
                 @if($order->midtrans_transaction_id)
-                <div>
+                <div class="mb-2">
                     <small class="text-muted">ID Transaksi</small>
                     <div class="small font-monospace">{{ $order->midtrans_transaction_id }}</div>
                 </div>
                 @endif
+                @if($order->courier)
+                <div class="mb-2 mt-3 pt-2 border-top">
+                    <small class="text-muted d-block mb-2">Kurir Pengirim</small>
+                    <div class="d-flex align-items-center gap-3">
+                        @if($order->courier->photo)
+                            <img src="{{ asset('storage/' . $order->courier->photo) }}" class="rounded-circle object-fit-cover shadow-sm cursor-pointer" style="width: 45px; height: 45px;" alt="{{ $order->courier->name }}" data-bs-toggle="modal" data-bs-target="#imagePreviewModal" data-img-src="{{ asset('storage/' . $order->courier->photo) }}">
+                        @else
+                            <div class="avatar-circle" style="width: 45px; height: 45px; font-size: 1.1rem;">
+                                {{ strtoupper(substr($order->courier->name, 0, 1)) }}
+                            </div>
+                        @endif
+                        <div>
+                            <div class="fw-bold text-dark">{{ $order->courier->name }}</div>
+                            <div class="text-muted small">{{ $order->courier->phone ?? 'No HP tidak ada' }}</div>
+                        </div>
+                    </div>
+                </div>
+                @endif
+            </div>
+        </div>
+
+        @if($order->proof_of_delivery)
+        <div class="card mb-3 shadow-sm border-0" style="border-radius: 14px; overflow: hidden;">
+            <div class="card-header bg-white py-3 border-0"><h6 class="fw-bold mb-0 text-primary"><i class="bi bi-camera me-2"></i>Bukti Pengiriman</h6></div>
+            <div class="card-body p-0">
+                <div class="position-relative cursor-pointer" data-bs-toggle="modal" data-bs-target="#imagePreviewModal" data-img-src="{{ Storage::url($order->proof_of_delivery) }}">
+                    <img src="{{ Storage::url($order->proof_of_delivery) }}" alt="Bukti Pengiriman" class="w-100" style="height: 250px; object-fit: cover;">
+                    <div class="position-absolute bottom-0 start-0 w-100 p-2 text-center text-white bg-dark bg-opacity-50">
+                        <small><i class="bi bi-fullscreen me-1"></i>Klik untuk perbesar</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+
+        <!-- Image Preview Modal -->
+        <div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content bg-transparent border-0">
+                    <div class="modal-body p-0 text-center position-relative">
+                        <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close" style="z-index: 1060;"></button>
+                        <img src="" id="previewImageSource" class="img-fluid rounded shadow-lg" alt="Preview Image">
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -130,15 +181,63 @@
 
                 <form action="{{ route('admin.orders.update-status', $order) }}" method="POST">
                     @csrf @method('PATCH')
-                    <select name="status" class="form-select mb-2">
-                        @foreach(['pending','processing','shipped','delivered','cancelled'] as $s)
-                        <option value="{{ $s }}" {{ $order->status == $s ? 'selected' : '' }}>{{ ucfirst($s) }}</option>
-                        @endforeach
-                    </select>
-                    <button type="submit" class="btn btn-primary w-100">Update Status</button>
+                    
+                    <div class="mb-3">
+                        <label class="form-label small text-muted">Ubah Status</label>
+                        <select name="status" id="statusSelect" class="form-select mb-2">
+                            @foreach(['pending','processing','shipped','delivered','cancelled'] as $s)
+                            <option value="{{ $s }}" {{ $order->status == $s ? 'selected' : '' }}>{{ ucfirst($s) }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="mb-3" id="courierSelectGroup" style="display: none;">
+                        <label class="form-label small text-muted">Pilih Kurir</label>
+                        <select name="courier_id" class="form-select">
+                            <option value="">-- Pilih Kurir --</option>
+                            @foreach($couriers as $courier)
+                            <option value="{{ $courier->id }}" {{ $order->courier_id == $courier->id ? 'selected' : '' }}>{{ $courier->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 fw-bold">Update Status</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Image Preview logic
+    const previewModal = document.getElementById('imagePreviewModal');
+    if (previewModal) {
+        previewModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const imgSrc = button.getAttribute('data-img-src');
+            const modalImg = previewModal.querySelector('#previewImageSource');
+            modalImg.src = imgSrc;
+        });
+    }
+
+    const statusSelect = document.getElementById('statusSelect');
+    const courierGroup = document.getElementById('courierSelectGroup');
+
+    function toggleCourierDisplay() {
+        if (statusSelect.value === 'shipped') {
+            courierGroup.style.display = 'block';
+            courierGroup.querySelector('select').setAttribute('required', 'required');
+        } else {
+            courierGroup.style.display = 'none';
+            courierGroup.querySelector('select').removeAttribute('required');
+        }
+    }
+
+    statusSelect.addEventListener('change', toggleCourierDisplay);
+    toggleCourierDisplay(); // Set initial state
+});
+</script>
 @endsection

@@ -5,11 +5,11 @@
 <!-- Stats Grid -->
 <div class="row g-3 mb-4">
     <div class="col-sm-6 col-xl-3">
-        <div class="stat-card">
+        <div class="stat-card h-100 d-flex flex-column justify-content-between">
             <div class="d-flex justify-content-between align-items-start">
                 <div>
                     <p class="text-muted small mb-1">Total Produk</p>
-                    <h3 class="fw-bold mb-0">{{ $stats['total_products'] }}</h3>
+                    <h3 class="fw-bold mb-0 counter-value" data-target="{{ $stats['total_products'] }}">0</h3>
                 </div>
                 <div class="stat-icon" style="background: #fff5f5; color: #E63946;">📦</div>
             </div>
@@ -20,36 +20,37 @@
         </div>
     </div>
     <div class="col-sm-6 col-xl-3">
-        <div class="stat-card">
+        <div class="stat-card h-100 d-flex flex-column justify-content-between">
             <div class="d-flex justify-content-between align-items-start">
                 <div>
                     <p class="text-muted small mb-1">Total Pesanan</p>
-                    <h3 class="fw-bold mb-0">{{ $stats['total_orders'] }}</h3>
+                    <h3 class="fw-bold mb-0 counter-value" data-target="{{ $stats['total_orders'] }}">0</h3>
                 </div>
                 <div class="stat-icon" style="background: #f0f9ff; color: #0ea5e9;">🧾</div>
             </div>
             <div class="mt-2 small">
-                <span class="text-warning">{{ $stats['pending_orders'] }} menunggu</span>
+                <span class="text-warning">{{ $stats['pending_payment'] }} menunggu lunas</span>
             </div>
         </div>
     </div>
     <div class="col-sm-6 col-xl-3">
-        <div class="stat-card">
+        <div class="stat-card h-100 d-flex flex-column justify-content-between">
             <div class="d-flex justify-content-between align-items-start">
                 <div>
                     <p class="text-muted small mb-1">Pelanggan</p>
-                    <h3 class="fw-bold mb-0">{{ $stats['total_customers'] }}</h3>
+                    <h3 class="fw-bold mb-0 counter-value" data-target="{{ $stats['total_customers'] }}">0</h3>
                 </div>
                 <div class="stat-icon" style="background: #f0fdf4; color: #16a34a;">👥</div>
             </div>
+            <div class="mt-2 small text-muted">Total terdaftar</div>
         </div>
     </div>
     <div class="col-sm-6 col-xl-3">
-        <div class="stat-card">
+        <div class="stat-card h-100 d-flex flex-column justify-content-between">
             <div class="d-flex justify-content-between align-items-start">
                 <div>
                     <p class="text-muted small mb-1">Total Pendapatan</p>
-                    <h4 class="fw-bold mb-0">Rp {{ number_format($stats['total_revenue'], 0, ',', '.') }}</h4>
+                    <h4 class="fw-bold mb-0">Rp <span class="counter-value" data-target="{{ $stats['total_revenue'] }}" data-type="currency">0</span></h4>
                 </div>
                 <div class="stat-icon" style="background: #fefce8; color: #ca8a04;">💰</div>
             </div>
@@ -133,17 +134,60 @@
         <div class="card">
             <div class="card-header"><h6 class="fw-bold mb-0">Aksi Cepat</h6></div>
             <div class="card-body d-flex flex-column gap-2">
-                <a href="{{ route('admin.products.create') }}" class="btn btn-primary">
-                    <i class="bi bi-plus-circle me-2"></i>Tambah Produk Baru
+                <a href="{{ route('admin.products.create') }}" class="btn btn-primary shadow-sm mb-1">
+                    <i class="bi bi-plus-circle me-2"></i>Tambah Produk
                 </a>
-                <a href="{{ route('admin.orders.index', ['status' => 'pending']) }}" class="btn btn-outline-warning">
-                    <i class="bi bi-clock me-2"></i>Pesanan Pending ({{ $stats['pending_orders'] }})
+                <a href="{{ route('admin.orders.ready') }}" class="btn btn-outline-primary shadow-none">
+                    <i class="bi bi-bicycle me-2"></i>Butuh Kurir ({{ $stats['need_courier'] }})
                 </a>
-                <a href="{{ route('admin.products.index', ['stock' => 'low']) }}" class="btn btn-outline-danger">
+                <a href="{{ route('admin.products.index', ['stock' => 'low']) }}" class="btn btn-outline-danger shadow-none">
                     <i class="bi bi-exclamation-triangle me-2"></i>Stok Menipis ({{ $stats['low_stock'] }})
                 </a>
             </div>
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const counters = document.querySelectorAll('.counter-value');
+        const duration = 800; // Snappier duration in ms
+
+        counters.forEach(counter => {
+            const target = +counter.getAttribute('data-target');
+            const isCurrency = counter.getAttribute('data-type') === 'currency';
+            const startTime = performance.now();
+
+            const updateCount = (currentTime) => {
+                const elapsedTime = currentTime - startTime;
+                const progress = Math.min(elapsedTime / duration, 1);
+                
+                // Easing function: easeOutExpo
+                const easeProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+                
+                const currentValue = Math.floor(easeProgress * target);
+
+                if (isCurrency) {
+                    counter.innerText = new Intl.NumberFormat('id-ID').format(currentValue);
+                } else {
+                    counter.innerText = currentValue;
+                }
+
+                if (progress < 1) {
+                    requestAnimationFrame(updateCount);
+                } else {
+                    if (isCurrency) {
+                        counter.innerText = new Intl.NumberFormat('id-ID').format(target);
+                    } else {
+                        counter.innerText = target;
+                    }
+                }
+            };
+
+            requestAnimationFrame(updateCount);
+        });
+    });
+</script>
 @endsection

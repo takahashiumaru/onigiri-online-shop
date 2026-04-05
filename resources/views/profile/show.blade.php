@@ -9,13 +9,14 @@
         <div class="col-lg-4">
             <div class="tp-card text-center">
                 <div class="tp-card-body" style="padding:32px 20px;">
-                    @if($user->avatar)
-                        <img src="{{ asset('storage/'.$user->avatar) }}" alt="Avatar"
+                    @php $userPhoto = $user->avatar ?? $user->photo; @endphp
+                    @if($userPhoto)
+                        <img src="{{ asset('storage/'.$userPhoto) }}" alt="Avatar"
                              class="rounded-circle mb-3"
                              style="width:100px;height:100px;object-fit:cover;border:3px solid var(--brand-light);">
                     @else
                         <div class="tp-avatar mx-auto mb-3" style="width:100px;height:100px;font-size:2.5rem;">
-                            {{ strtoupper(substr($user->name,0,1)) }}
+                            {{ strtoupper(substr($user->name, 0, 1)) }}
                         </div>
                     @endif
                     <h5 class="mb-1" style="font-weight:700;">{{ $user->name }}</h5>

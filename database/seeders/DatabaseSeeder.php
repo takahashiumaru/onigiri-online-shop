@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -28,6 +27,15 @@ class DatabaseSeeder extends Seeder
             'role' => 'customer',
             'phone' => '08987654321',
             'address' => 'Jl. Contoh No. 123, Jakarta',
+        ]);
+
+        // Kurir
+        User::create([
+            'name' => 'Kurir Express',
+            'email' => 'kurir@onigiri.com',
+            'password' => bcrypt('password'),
+            'role' => 'courier',
+            'phone' => '08123456789',
         ]);
 
         // Products

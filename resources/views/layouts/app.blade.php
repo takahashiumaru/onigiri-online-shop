@@ -678,7 +678,9 @@
                 <div class="container d-flex justify-content-between align-items-center">
                     <div class="d-flex gap-3">
                         <a href="{{ route('home') }}">Tentang Kami</a>
+                        @if(!auth()->check() || (!auth()->user()->isAdmin() && !auth()->user()->isCourier()))
                         <a href="{{ route('products') }}">Promo</a>
+                        @endif
                     </div>
                     <div class="d-flex gap-3">
                         @auth
@@ -693,8 +695,9 @@
 
             {{-- Desktop navbar --}}
             <div class="container tp-navbar-main tp-navbar-desktop" style="display:none;">
-                <a class="tp-brand" href="{{ route('home') }}">🍙 <span>Suki</span>Onigiri</a>
+                <a class="tp-brand" href="{{ auth()->check() && auth()->user()->isCourier() ? route('courier.dashboard') : route('home') }}">🍙 <span>Suki</span>Onigiri</a>
 
+                @if(!auth()->check() || (!auth()->user()->isAdmin() && !auth()->user()->isCourier()))
                 <a href="{{ route('products') }}" class="tp-category-btn">
                     <i class="bi bi-grid"></i> Kategori
                 </a>
@@ -705,6 +708,11 @@
                         <button class="btn-search" type="submit"><i class="bi bi-search"></i></button>
                     </form>
                 </div>
+                @else
+                <div class="tp-search" style="visibility: hidden;">
+                    <!-- Spacer -->
+                </div>
+                @endif
 
                 <div class="tp-nav-icons">
                     @auth
@@ -713,7 +721,7 @@
                             @php $orderAlerts = auth()->user()->orders()->whereIn('status',['waiting_payment','waiting_confirmation','processing','shipping'])->count(); @endphp
                             @if($orderAlerts)<span class="tp-badge">{{ $orderAlerts }}</span>@endif
                         </a>
-                        @if(!auth()->user()->isAdmin())
+                        @if(!auth()->user()->isAdmin() && !auth()->user()->isCourier())
                         <a href="{{ route('cart.index') }}" class="tp-icon-btn" title="Keranjang">
                             <i class="bi bi-cart3"></i>
                             @php $cartCount = auth()->user()->cartItems()->count(); @endphp
@@ -728,23 +736,29 @@
                     <div class="dropdown">
                         <button class="tp-user-btn" data-bs-toggle="dropdown" aria-expanded="false">
                             <div class="tp-avatar">
-                                @if(auth()->user()->avatar)
-                                    <img src="{{ asset('storage/'.auth()->user()->avatar) }}" alt="">
+                                @php $userPhoto = auth()->user()->avatar ?? auth()->user()->photo; @endphp
+                                @if($userPhoto)
+                                    <img src="{{ asset('storage/'.$userPhoto) }}" alt="">
                                 @else
-                                    {{ strtoupper(substr(auth()->user()->name,0,1)) }}
+                                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                                 @endif
                             </div>
                             <div class="tp-user-info d-none d-xl-block">
                                 <div class="tp-user-name">{{ Str::limit(auth()->user()->name, 16) }}</div>
-                                <div class="tp-user-label">{{ auth()->user()->isAdmin() ? 'Admin' : 'Member' }}</div>
+                                <div class="tp-user-label">{{ auth()->user()->isAdmin() ? 'Admin' : (auth()->user()->isCourier() ? 'Kurir' : 'Member') }}</div>
                             </div>
                             <i class="bi bi-chevron-down" style="font-size:.7rem;color:var(--text-tertiary);"></i>
                         </button>
                         <ul class="dropdown-menu tp-dropdown dropdown-menu-end">
                             <li><a class="dropdown-item" href="{{ route('profile.show') }}"><i class="bi bi-person-circle"></i>Profil Saya</a></li>
+                            @if(!auth()->user()->isCourier())
                             <li><a class="dropdown-item" href="{{ route('orders.index') }}"><i class="bi bi-bag-check"></i>Pesanan</a></li>
+                            @endif
                             @if(auth()->user()->isAdmin())
-                            <li><a class="dropdown-item" href="{{ route('admin.dashboard') }}"><i class="bi bi-speedometer2"></i>Dashboard</a></li>
+                            <li><a class="dropdown-item" href="{{ route('admin.dashboard') }}"><i class="bi bi-speedometer2"></i>Dashboard Admin</a></li>
+                            @endif
+                            @if(auth()->user()->isCourier())
+                            <li><a class="dropdown-item" href="{{ route('courier.dashboard') }}"><i class="bi bi-box-seam"></i>Dashboard Kurir</a></li>
                             @endif
                             <li><hr class="dropdown-divider"></li>
                             <li>
@@ -766,20 +780,26 @@
 
             {{-- Mobile navbar --}}
             <div class="container tp-navbar-main tp-navbar-mobile" style="display:none;">
-                <a class="tp-brand" href="{{ route('home') }}" style="font-size:1.05rem;">🍙 <span>Onigiri</span>Shop</a>
+                <a class="tp-brand" href="{{ auth()->check() && auth()->user()->isCourier() ? route('courier.dashboard') : route('home') }}" style="font-size:1.05rem;">🍙 <span>Onigiri</span>Shop</a>
+                @if(!auth()->check() || (!auth()->user()->isAdmin() && !auth()->user()->isCourier()))
                 <div class="tp-search" style="min-width:0;">
                     <form action="{{ route('products') }}" method="GET">
                         <input name="q" type="search" class="form-control form-control-sm" placeholder="Cari..." value="{{ request('q') }}" style="padding:8px 40px 8px 12px; font-size:.8rem;">
                         <button class="btn-search" type="submit" style="width:30px;height:30px;"><i class="bi bi-search" style="font-size:.8rem;"></i></button>
                     </form>
                 </div>
+                @else
+                <div style="flex: 1;"></div>
+                @endif
                 <div class="tp-nav-icons">
                     @auth
+                        @if(!auth()->user()->isAdmin() && !auth()->user()->isCourier())
                         <a href="{{ route('cart.index') }}" class="tp-icon-btn" style="width:36px;height:36px;font-size:1.1rem;">
                             <i class="bi bi-cart3"></i>
                             @php $cartCount = auth()->user()->cartItems()->count(); @endphp
                             @if($cartCount)<span class="tp-badge" style="font-size:.55rem;">{{ $cartCount }}</span>@endif
                         </a>
+                        @endif
                     @endauth
                     <button class="tp-icon-btn" style="width:36px;height:36px;font-size:1.1rem;" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
                         <i class="bi bi-list"></i>
@@ -818,7 +838,9 @@
                         <h6>SukiOnigiri</h6>
                         <ul>
                             <li><a href="{{ route('home') }}">Tentang Kami</a></li>
+                            @if(!auth()->check() || (!auth()->user()->isAdmin() && !auth()->user()->isCourier()))
                             <li><a href="{{ route('products') }}">Semua Menu</a></li>
+                            @endif
                             <li><a href="#">Blog</a></li>
                         </ul>
                     </div>
@@ -863,10 +885,11 @@
             @auth
             <div class="tp-offcanvas-user">
                 <div class="tp-avatar">
-                    @if(auth()->user()->avatar)
-                        <img src="{{ asset('storage/'.auth()->user()->avatar) }}" alt="">
+                    @php $userPhoto = auth()->user()->avatar ?? auth()->user()->photo; @endphp
+                    @if($userPhoto)
+                        <img src="{{ asset('storage/'.$userPhoto) }}" alt="">
                     @else
-                        {{ strtoupper(substr(auth()->user()->name,0,1)) }}
+                        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                     @endif
                 </div>
                 <div>
@@ -878,16 +901,20 @@
             @endauth
 
             <a href="{{ route('home') }}" class="tp-offcanvas-link"><i class="bi bi-house"></i> Beranda</a>
+            @if(!auth()->check() || (!auth()->user()->isAdmin() && !auth()->user()->isCourier()))
             <a href="{{ route('products') }}" class="tp-offcanvas-link"><i class="bi bi-grid-3x3-gap"></i> Menu</a>
+            @endif
 
             @auth
                 <div class="tp-offcanvas-divider"></div>
+                @if(!auth()->user()->isAdmin() && !auth()->user()->isCourier())
                 <a href="{{ route('orders.index') }}" class="tp-offcanvas-link"><i class="bi bi-bag-check"></i> Pesanan Saya</a>
                 <a href="{{ route('cart.index') }}" class="tp-offcanvas-link">
                     <i class="bi bi-cart3"></i> Keranjang
                     @php $cartCount = auth()->user()->cartItems()->count(); @endphp
                     @if($cartCount)<span class="badge bg-danger rounded-pill ms-auto">{{ $cartCount }}</span>@endif
                 </a>
+                @endif
                 <a href="{{ route('notifications') }}" class="tp-offcanvas-link">
                     <i class="bi bi-bell"></i> Notifikasi
                     @php $orderAlerts = auth()->user()->orders()->whereIn('status',['waiting_payment','waiting_confirmation','processing','shipping'])->count(); @endphp

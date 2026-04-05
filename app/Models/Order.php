@@ -24,6 +24,8 @@ class Order extends Model
         'shipping_phone',
         'shipping_address',
         'notes',
+        'courier_id',
+        'proof_of_delivery',
     ];
 
     protected $casts = [
@@ -46,6 +48,11 @@ class Order extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function courier()
+    {
+        return $this->belongsTo(User::class, 'courier_id');
     }
 
     public function items()

@@ -25,13 +25,14 @@
                     </div>
                     <div class="tp-card-body">
                         <div class="d-flex align-items-center gap-3">
-                            @if($user->avatar)
-                                <img src="{{ asset('storage/'.$user->avatar) }}" alt="Avatar" id="avatarPreview"
+                            @php $userPhoto = $user->avatar ?? $user->photo; @endphp
+                            @if($userPhoto)
+                                <img src="{{ asset('storage/'.$userPhoto) }}" alt="Avatar" id="avatarPreview"
                                      class="rounded-circle"
                                      style="width:72px;height:72px;object-fit:cover;border:3px solid var(--brand-light);">
                             @else
                                 <div class="tp-avatar" id="avatarPreview" style="width:72px;height:72px;font-size:1.5rem;">
-                                    {{ strtoupper(substr($user->name,0,1)) }}
+                                    {{ strtoupper(substr($user->name, 0, 1)) }}
                                 </div>
                             @endif
                             <div class="flex-grow-1">

@@ -11,6 +11,9 @@ class HomeController extends Controller
 {
     public function index()
     {
+        if (auth()->check() && auth()->user()->isCourier()) {
+            return redirect()->route('courier.dashboard');
+        }
         // Ambil 5 produk terbaru dari database (gambar dari storage jika ada)
         $products = Product::latest()->take(5)->get();
 
@@ -35,6 +38,9 @@ class HomeController extends Controller
 
     public function products(Request $request)
     {
+        if (auth()->check() && auth()->user()->isCourier()) {
+            return redirect()->route('courier.dashboard');
+        }
         $query = Product::where('is_available', true);
 
         if ($request->category) {
@@ -73,6 +79,9 @@ class HomeController extends Controller
 
     public function show(Product $product)
     {
+        if (auth()->check() && auth()->user()->isCourier()) {
+            return redirect()->route('courier.dashboard');
+        }
         // ambil review dari order yang sudah 'delivered' dan memiliki rating
         $reviews = OrderItem::with(['order'])
             ->where('product_id', $product->id)

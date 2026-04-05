@@ -99,6 +99,47 @@
                         <small class="text-muted"><i class="bi bi-chat-left-text me-1"></i>{{ $order->notes }}</small>
                     </div>
                     @endif
+                    @if($order->courier)
+                    <div class="mt-3 pt-3 border-top">
+                        <h6 class="fw-bold mb-3 small text-muted">Kurir Pengirim</h6>
+                        <div class="d-flex align-items-center gap-3">
+                            @if($order->courier->photo)
+                                <img src="{{ asset('storage/' . $order->courier->photo) }}" class="rounded-circle object-fit-cover shadow-sm cursor-pointer" style="width: 50px; height: 50px;" alt="{{ $order->courier->name }}" data-bs-toggle="modal" data-bs-target="#imagePreviewModal" data-img-src="{{ asset('storage/' . $order->courier->photo) }}">
+                            @else
+                                <div class="avatar-circle" style="width: 50px; height: 50px; font-size: 1.2rem;">
+                                    {{ strtoupper(substr($order->courier->name, 0, 1)) }}
+                                </div>
+                            @endif
+                            <div>
+                                <div class="fw-bold text-dark">{{ $order->courier->name }}</div>
+                                <div class="text-muted small"><i class="bi bi-telephone me-1"></i>{{ $order->courier->phone ?? 'Kontak tidak tersedia' }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+                    @if($order->proof_of_delivery)
+                    <div class="mt-3 pt-3 border-top">
+                        <h6 class="fw-bold mb-2 small text-muted">Bukti Pengiriman</h6>
+                        <div class="position-relative cursor-pointer" data-bs-toggle="modal" data-bs-target="#imagePreviewModal" data-img-src="{{ Storage::url($order->proof_of_delivery) }}" style="max-width: 250px; border-radius: 12px; overflow: hidden;">
+                            <img src="{{ Storage::url($order->proof_of_delivery) }}" alt="Bukti Pengiriman" class="img-fluid border" style="height: 150px; width: 100%; object-fit: cover;">
+                            <div class="position-absolute bottom-0 start-0 w-100 p-1 text-center text-white bg-dark bg-opacity-50" style="font-size: 0.7rem;">
+                                <i class="bi bi-fullscreen me-1"></i>Klik untuk perbesar
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        <!-- Image Preview Modal -->
+        <div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content bg-transparent border-0">
+                    <div class="modal-body p-0 text-center position-relative">
+                        <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close" style="z-index: 1060;"></button>
+                        <img src="" id="previewImageSource" class="img-fluid rounded shadow-lg" alt="Preview Image" style="max-height: 90vh;">
+                    </div>
                 </div>
             </div>
         </div>
@@ -170,6 +211,17 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function () {
+        // Image Preview Modal Logic
+        const previewModal = document.getElementById('imagePreviewModal');
+        if (previewModal) {
+            previewModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const imgSrc = button.getAttribute('data-img-src');
+                const modalImg = previewModal.querySelector('#previewImageSource');
+                modalImg.src = imgSrc;
+            });
+        }
+
         // CSRF Token
         const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 

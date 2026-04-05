@@ -255,8 +255,24 @@
                 <a href="{{ route('admin.products.index') }}" class="sidebar-link {{ request()->routeIs('admin.products*') ? 'active' : '' }}">
                     <i class="bi bi-box-seam"></i> Produk
                 </a>
-                <a href="{{ route('admin.orders.index') }}" class="sidebar-link {{ request()->routeIs('admin.orders*') ? 'active' : '' }}">
-                    <i class="bi bi-receipt"></i> Pesanan
+                <a href="{{ route('admin.orders.index') }}" class="sidebar-link {{ request()->routeIs('admin.orders.index') && !request()->has('status') ? 'active' : '' }}">
+                    <i class="bi bi-receipt"></i> Semua Pesanan
+                </a>
+                <a href="{{ route('admin.orders.ready') }}" class="sidebar-link {{ request()->routeIs('admin.orders.ready') ? 'active' : '' }}">
+                    <i class="bi bi-box-arrow-up-right"></i> Siap Dikirim
+                </a>
+
+                <div class="nav-label">Pengiriman</div>
+                <a href="{{ route('admin.couriers.index') }}" class="sidebar-link {{ request()->routeIs('admin.couriers*') ? 'active' : '' }}">
+                    <i class="bi bi-person-badge"></i> Daftar Kurir
+                </a>
+
+                <div class="nav-label">Laporan</div>
+                <a href="{{ route('admin.reports.daily') }}" class="sidebar-link {{ request()->routeIs('admin.reports.daily') ? 'active' : '' }}">
+                    <i class="bi bi-calendar-event"></i> Laporan Harian
+                </a>
+                <a href="{{ route('admin.reports.monthly') }}" class="sidebar-link {{ request()->routeIs('admin.reports.monthly') ? 'active' : '' }}">
+                    <i class="bi bi-calendar-range"></i> Laporan Bulanan
                 </a>
 
                 <div class="nav-label">Akun</div>

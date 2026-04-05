@@ -78,7 +78,7 @@
                         <form action="{{ route('admin.orders.update-status', $order) }}" method="POST">
                             @csrf @method('PATCH')
                             <div class="d-flex gap-1">
-                                <select name="status" class="form-select form-select-sm" style="min-width: 130px;" onchange="this.form.submit()">
+                                <select name="status" class="form-select form-select-sm" style="min-width: 130px;" onchange="if(this.value === 'shipped') { alert('Harap klik ikon detail (mata) untuk mengubah status menjadi Dikirim, karena Anda harus memilih kurir tujuan.'); this.value='{{ $order->status }}'; } else { this.form.submit(); }">
                                     @foreach(['pending','processing','shipped','delivered','cancelled'] as $s)
                                     <option value="{{ $s }}" {{ $order->status == $s ? 'selected' : '' }}>{{ ucfirst($s) }}</option>
                                     @endforeach
