@@ -36,6 +36,7 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('password'),
             'role' => 'courier',
             'phone' => '08123456789',
+            'photo' => 'couriers/wy.png',
         ]);
 
         // Products
@@ -47,7 +48,7 @@ class DatabaseSeeder extends Seeder
                 'price' => 12000,
                 'stock' => 50,
                 'category' => 'classic',
-                'image' => 'products/tuna.jpeg',
+                'image' => 'products/tuna_mayo.jpg',
                 'is_available' => true,
             ],
             [
@@ -57,7 +58,7 @@ class DatabaseSeeder extends Seeder
                 'price' => 12000,
                 'stock' => 50,
                 'category' => 'classic',
-                'image' => 'products/hottuna.jpeg',
+                'image' => 'products/hot_tuna.jpg',
                 'is_available' => true,
             ],
             [
@@ -67,7 +68,7 @@ class DatabaseSeeder extends Seeder
                 'price' => 12000,
                 'stock' => 50,
                 'category' => 'classic',
-                'image' => 'products/hottuna.jpeg',
+                'image' => 'products/hot_tuna.jpg',
                 'is_available' => true,
             ],
             [
@@ -77,7 +78,7 @@ class DatabaseSeeder extends Seeder
                 'price' => 12000,
                 'stock' => 50,
                 'category' => 'classic',
-                'image' => 'products/chikenmayo.jpeg',
+                'image' => 'products/chicken_mayo.jpg',
                 'is_available' => true,
             ],
             [
@@ -87,7 +88,7 @@ class DatabaseSeeder extends Seeder
                 'price' => 12000,
                 'stock' => 50,
                 'category' => 'classic',
-                'image' => 'products/hotchiken.jpeg',
+                'image' => 'products/hot_chicken.jpg',
                 'is_available' => true,
             ],
             [
@@ -97,7 +98,7 @@ class DatabaseSeeder extends Seeder
                 'price' => 15000,
                 'stock' => 50,
                 'category' => 'premium',
-                'image' => 'products/shirasuteri.jpeg',
+                'image' => 'products/shirasu_teri.jpg',
                 'is_available' => true,
             ],
         ];
