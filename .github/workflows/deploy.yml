@@ -1,4 +1,4 @@
-name: Deploy Production
+name: Deploy Laravel to VPS
 
 on:
   push:
@@ -27,12 +27,12 @@ jobs:
             fi
 
             # 3. Buat Network (Agar bisa saling ngobrol dengan nama container)
-            docker network create onigiri-network 2>/dev/null || true
+            docker network create uaps-network 2>/dev/null || true
 
             # 4. Pastikan Database berjalan
             if [ ! "$(docker ps -aq -f name=mysql_db)" ]; then
                 docker run -d --name mysql_db --restart unless-stopped \
-                  --network onigiri-network \
+                  --network uaps-network \
                   -e MYSQL_ROOT_PASSWORD=rootpassword \
                   -e MYSQL_DATABASE=laravel_payment \
                   -e MYSQL_USER=umarvps \
@@ -41,27 +41,27 @@ jobs:
                   mysql:8.2
             else
                 # Pastikan container database terhubung ke network yang sama
-                docker network connect onigiri-network mysql_db 2>/dev/null || true
+                docker network connect uaps-network mysql_db 2>/dev/null || true
             fi
 
             # 5. Build Image Laravel dari kode terbaru
-            docker build --pull -t image-onigiri .
+            docker build --pull -t image-uaps .
 
             # 6. Restart Container Aplikasi dengan port 8080
-            docker stop onigiri-app || true
-            docker rm onigiri-app || true
+            docker stop uaps-app || true
+            docker rm uaps-app || true
 
             # REVISI ADA DI SINI: -p 8080:80
-            docker run -d --name onigiri-app \
+            docker run -d --name uaps-app \
               --restart unless-stopped \
-              --network onigiri-network \
+              --network uaps-network \
               -p 8080:80 \
               -e APP_KEY=${{ secrets.APP_KEY }} \
               -e DB_HOST=mysql_db \
-              -e DB_DATABASE=laravel_payment \
+              -e DB_DATABASE=aps \
               -e DB_USERNAME=umarvps \
               -e DB_PASSWORD=umarvps \
-              image-onigiri
+              image-uaps
 
             # 7. Bersihkan resource Docker (sampah image lama) yang tidak terpakai
             docker image prune -f
