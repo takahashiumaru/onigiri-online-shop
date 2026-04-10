@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Admin') - SukiOnigiri Admin</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -12,8 +13,13 @@
         :root {
             --sidebar-width: 260px;
 
-            --brand: #03AC0E;
-            --brand-600: #02970c;
+            /* PALETTE MERAH - gampang diubah di sini */
+            --brand: #ef4444;
+            --brand-600: #dc2626;
+            --brand-hover: var(--brand-600);
+            --brand-light: #fff1f2;
+            --brand-rgb: 239,68,68;
+            --brand-50: rgba(var(--brand-rgb), .06);
 
             --text: #111827;
             --muted: #6b7280;
@@ -23,7 +29,7 @@
 
             --sidebar-bg: #0b1220;         /* lebih “premium” */
             --sidebar-bg-2: #0f172a;
-            --sidebar-active: rgba(3,172,14,.18);
+            --sidebar-active: rgba(var(--brand-rgb), .18);
 
             --radius-md: 14px;
             --radius-lg: 18px;
@@ -31,7 +37,7 @@
             --shadow-sm: 0 4px 12px rgba(16,24,40,0.04);
             --shadow-md: 0 10px 30px rgba(16,24,40,0.08);
 
-            --ring: 0 0 0 .25rem rgba(3,172,14,.12);
+            --ring: 0 0 0 .25rem rgba(var(--brand-rgb),.12);
         }
 
         body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); }
@@ -83,7 +89,7 @@
         }
         .sidebar-link.active {
             background: var(--sidebar-active);
-            border-color: rgba(3,172,14,.25);
+            border-color: rgba(var(--brand-rgb),.25);
             color: #fff;
         }
         .sidebar-link i { font-size: 1.1rem; width: 20px; opacity: .95; }
@@ -139,9 +145,9 @@
             width:44px; height:44px; display:inline-flex; align-items:center; justify-content:center; border-radius:10px; transition:transform .08s; border:1px solid transparent;
         }
         .top-icon:hover{ transform:translateY(-2px); background:rgba(16,24,40,.03); border-color:rgba(16,24,40,.04); }
-        .notif-badge { position:absolute; top:8px; right:8px; font-size:.65rem; padding:3px 6px; border-radius:999px; background:#ff5252; color:#fff; }
+        .notif-badge { position:absolute; top:8px; right:8px; font-size:.65rem; padding:3px 6px; border-radius:999px; background:var(--brand); color:#fff; }
 
-        .avatar-circle{ width:40px; height:40px; border-radius:999px; display:inline-flex; align-items:center; justify-content:center; background:linear-gradient(135deg,var(--brand),var(--brand-600)); color:#fff; font-weight:800; box-shadow:0 6px 14px rgba(3,172,14,.08); }
+        .avatar-circle{ width:40px; height:40px; border-radius:999px; display:inline-flex; align-items:center; justify-content:center; background:linear-gradient(135deg,var(--brand),var(--brand-600)); color:#fff; font-weight:800; box-shadow:0 6px 14px rgba(var(--brand-rgb),.08); }
         @media (max-width: 991px) {
             .topbar-search { display:none; }
             .page-title{ font-size:.98rem; }
@@ -162,7 +168,7 @@
         .stat-card:hover {
             transform: translateY(-4px);
             box-shadow: var(--shadow-md);
-            border-color: rgba(3,172,14,.10);
+            border-color: rgba(var(--brand-rgb),.10);
         }
         .stat-icon {
             width: 52px;
@@ -172,7 +178,7 @@
             align-items: center;
             justify-content: center;
             font-size: 1.4rem;
-            background: rgba(3,172,14,.08);
+            background: rgba(var(--brand-rgb),.08);
             color: var(--brand-600);
         }
 
@@ -185,7 +191,7 @@
         .card:hover {
             transform: translateY(-4px);
             box-shadow: var(--shadow-md);
-            border-color: rgba(3,172,14,.10);
+            border-color: rgba(var(--brand-rgb),.10);
         }
         .card-header {
             background: transparent;
@@ -205,11 +211,11 @@
         .badge { border-radius: 999px; font-weight: 700; }
 
         .btn { border-radius: 12px; font-weight: 800; }
-        .btn-primary { background: var(--brand); border-color: var(--brand); box-shadow: 0 8px 20px rgba(3,172,14,.12); }
+        .btn-primary { background: var(--brand); border-color: var(--brand); box-shadow: 0 8px 20px rgba(var(--brand-rgb),.12); }
         .btn-primary:hover { background: var(--brand-600); border-color: var(--brand-600); }
 
         .form-control, .form-select { border-radius: 12px; border-color: var(--border); padding: .65rem .85rem; }
-        .form-control:focus, .form-select:focus { border-color: rgba(3,172,14,.45); box-shadow: var(--ring); }
+        .form-control:focus, .form-select:focus { border-color: rgba(var(--brand-rgb),.45); box-shadow: var(--ring); }
 
         table th {
             font-weight: 800;
@@ -221,7 +227,7 @@
         .table > :not(caption) > * > * { border-color: rgba(17, 24, 39, 0.08); }
 
         .alert { border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow-sm); }
-        .alert-danger { background: #FEF2F2; border-color: rgba(239,68,68,.20); color: #7f1d1d; }
+        .alert-danger { background: var(--brand-light); border-color: rgba(var(--brand-rgb),.20); color: #7f1d1d; }
 
         /* layout fix for admin */
         html, body { height: 100%; }
@@ -249,8 +255,24 @@
                 <a href="{{ route('admin.products.index') }}" class="sidebar-link {{ request()->routeIs('admin.products*') ? 'active' : '' }}">
                     <i class="bi bi-box-seam"></i> Produk
                 </a>
-                <a href="{{ route('admin.orders.index') }}" class="sidebar-link {{ request()->routeIs('admin.orders*') ? 'active' : '' }}">
-                    <i class="bi bi-receipt"></i> Pesanan
+                <a href="{{ route('admin.orders.index') }}" class="sidebar-link {{ request()->routeIs('admin.orders.index') && !request()->has('status') ? 'active' : '' }}">
+                    <i class="bi bi-receipt"></i> Semua Pesanan
+                </a>
+                <a href="{{ route('admin.orders.ready') }}" class="sidebar-link {{ request()->routeIs('admin.orders.ready') ? 'active' : '' }}">
+                    <i class="bi bi-box-arrow-up-right"></i> Siap Dikirim
+                </a>
+
+                <div class="nav-label">Pengiriman</div>
+                <a href="{{ route('admin.couriers.index') }}" class="sidebar-link {{ request()->routeIs('admin.couriers*') ? 'active' : '' }}">
+                    <i class="bi bi-person-badge"></i> Daftar Kurir
+                </a>
+
+                <div class="nav-label">Laporan</div>
+                <a href="{{ route('admin.reports.daily') }}" class="sidebar-link {{ request()->routeIs('admin.reports.daily') ? 'active' : '' }}">
+                    <i class="bi bi-calendar-event"></i> Laporan Harian
+                </a>
+                <a href="{{ route('admin.reports.monthly') }}" class="sidebar-link {{ request()->routeIs('admin.reports.monthly') ? 'active' : '' }}">
+                    <i class="bi bi-calendar-range"></i> Laporan Bulanan
                 </a>
 
                 <div class="nav-label">Akun</div>

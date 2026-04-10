@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Customer\HomeController;
 use App\Http\Controllers\Customer\CartController;
 use App\Http\Controllers\Customer\CheckoutController;
@@ -11,6 +12,8 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\OrderItemRatingController;
+use App\Http\Controllers\CourierController;
 use Illuminate\Support\Facades\Route;
 
 // =====================
@@ -20,7 +23,7 @@ Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login']);
     Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
-    Route::post('/register', [RegisterController::class, 'register']);
+    Route::post('/register', [RegisterController::class, 'register'])->name('register.post');
 });
 
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
@@ -44,6 +47,7 @@ Route::middleware(['auth', 'customer'])->group(function () {
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
     Route::get('/checkout/success/{order}', [CheckoutController::class, 'success'])->name('checkout.success');
+    Route::post('/checkout/regenerate/{order}', [CheckoutController::class, 'regenerateToken'])->name('checkout.regenerate');
 
     // Orders
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
@@ -72,10 +76,17 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::resource('products', ProductController::class);
     Route::patch('/products/{product}/update-stock', [ProductController::class, 'updateStock'])->name('products.update-stock');
 
+    // Couriers
+    Route::resource('couriers', \App\Http\Controllers\Admin\CourierController::class);
+
     // Orders
     Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/ready', [AdminOrderController::class, 'readyForCourier'])->name('orders.ready');
     Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
     Route::patch('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.update-status');
+    // Reports
+    Route::get('/reports/daily', [ReportController::class, 'daily'])->name('reports.daily');
+    Route::get('/reports/monthly', [ReportController::class, 'monthly'])->name('reports.monthly');
 });
 
 // User notifications page (protected)
@@ -96,4 +107,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/order-items/{item}/rating', [OrderItemRatingController::class, 'update'])
+        ->name('order-items.updateRating');
+});
+
+// =====================
+// COURIER ROUTES
+// =====================
+Route::prefix('courier')->name('courier.')->middleware(['auth', 'courier'])->group(function () {
+    Route::get('/dashboard', [CourierController::class, 'index'])->name('dashboard');
+    Route::get('/orders/{order}', [CourierController::class, 'show'])->name('orders.show');
+    Route::post('/orders/{order}/delivery', [CourierController::class, 'updateDelivery'])->name('orders.update-delivery');
 });

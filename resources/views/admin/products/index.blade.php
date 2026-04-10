@@ -52,7 +52,7 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse($products as $product)
+@forelse($products as $product)
                 <tr>
                     <td>
                         <div class="d-flex align-items-center gap-3">
@@ -71,13 +71,14 @@
                     <td class="fw-bold">Rp {{ number_format($product->price, 0, ',', '.') }}</td>
                     <td>
                         <div class="d-flex align-items-center gap-2">
-                            <span class="fw-bold {{ $product->stock == 0 ? 'text-danger' : ($product->stock <= 5 ? 'text-warning' : 'text-success') }}">
+                            <span class="fw-bold stock-val-{{ $product->id }} {{ $product->stock == 0 ? 'text-danger' : ($product->stock <= 5 ? 'text-warning' : 'text-success') }}">
                                 {{ $product->stock }}
                             </span>
-                            <!-- Quick Stock Update -->
-                            <button class="btn btn-xs btn-outline-secondary btn-sm px-1 py-0"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#stockModal{{ $product->id }}">
+                            <!-- Quick Stock Update Trigger -->
+                            <button class="btn btn-xs btn-outline-secondary btn-sm px-1 py-0 btn-edit-stock"
+                                    data-id="{{ $product->id }}"
+                                    data-name="{{ $product->name }}"
+                                    data-stock="{{ $product->stock }}">
                                 <i class="bi bi-pencil" style="font-size: 0.7rem;"></i>
                             </button>
                         </div>
@@ -89,53 +90,19 @@
                     </td>
                     <td>
                         <div class="d-flex gap-1">
-                            <a href="{{ route('admin.products.edit', $product) }}" class="btn btn-sm btn-outline-primary">
+                            <a href="{{ route('admin.products.edit', $product) }}" class="btn btn-sm btn-outline-primary shadow-none">
                                 <i class="bi bi-pencil"></i>
                             </a>
                             <form action="{{ route('admin.products.destroy', $product) }}" method="POST"
                                   onsubmit="return confirm('Hapus produk {{ $product->name }}?')">
                                 @csrf @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                <button type="submit" class="btn btn-sm btn-outline-danger shadow-none">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </form>
                         </div>
                     </td>
                 </tr>
-
-                <!-- Stock Modal -->
-                <div class="modal fade" id="stockModal{{ $product->id }}" tabindex="-1">
-                    <div class="modal-dialog modal-sm">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h6 class="modal-title fw-bold">Update Stok: {{ $product->name }}</h6>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                            </div>
-                            <form action="{{ route('admin.products.update-stock', $product) }}" method="POST">
-                                @csrf @method('PATCH')
-                                <div class="modal-body">
-                                    <p class="text-muted small mb-3">Stok saat ini: <strong>{{ $product->stock }}</strong></p>
-                                    <div class="mb-3">
-                                        <label class="form-label fw-semibold small">Tindakan</label>
-                                        <select name="action" class="form-select form-select-sm">
-                                            <option value="set">Set stok ke nilai baru</option>
-                                            <option value="add">Tambah stok</option>
-                                            <option value="subtract">Kurangi stok</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-0">
-                                        <label class="form-label fw-semibold small">Jumlah</label>
-                                        <input type="number" name="stock" class="form-control form-control-sm" min="0" value="0" required>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Batal</button>
-                                    <button type="submit" class="btn btn-primary btn-sm">Update Stok</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
                 @empty
                 <tr>
                     <td colspan="6" class="text-center py-4 text-muted">Tidak ada produk ditemukan</td>
@@ -150,4 +117,133 @@
     </div>
     @endif
 </div>
+
+<!-- SINGLE Stock Modal -->
+<div class="modal fade" id="stockModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content shadow border-0">
+            <div class="modal-header">
+                <h6 class="modal-title fw-bold">Update Stok</h6>
+                <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="stockForm" method="POST">
+                @csrf @method('PATCH')
+                <div class="modal-body">
+                    <h6 id="modalProdName" class="fw-bold mb-3 text-brand"></h6>
+                    <p class="text-muted small mb-3">Stok saat ini: <strong id="modalCurrStock">0</strong></p>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">Tindakan</label>
+                        <select name="action" class="form-select form-select-sm shadow-none">
+                            <option value="set">Set stok ke nilai baru</option>
+                            <option value="add">Tambah stok</option>
+                            <option value="subtract">Kurangi stok</option>
+                        </select>
+                    </div>
+                    <div class="mb-0">
+                        <label class="form-label fw-semibold small">Jumlah</label>
+                        <input type="number" name="stock" class="form-control form-control-sm shadow-none" min="0" value="0" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm px-3" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" id="btnSaveStock" class="btn btn-primary btn-sm px-3">Update Stok</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const stockForm = document.getElementById('stockForm');
+    const modalProdName = document.getElementById('modalProdName');
+    const modalCurrStock = document.getElementById('modalCurrStock');
+    const stockModalEl = document.getElementById('stockModal');
+    const btnSaveStock = document.getElementById('btnSaveStock');
+    let activeProductId = null;
+
+    // Helper: Dynamic URL safely
+    const getUpdateUrl = (id) => `{{ url('admin/products') }}/${id}/update-stock`;
+
+    // Modal population
+    document.querySelectorAll('.btn-edit-stock').forEach(btn => {
+        btn.addEventListener('click', function() {
+            activeProductId = this.dataset.id;
+            modalProdName.textContent = this.dataset.name;
+            modalCurrStock.textContent = this.dataset.stock;
+            
+            // USE setAttribute to avoid conflict with <select name="action">
+            stockForm.setAttribute('action', getUpdateUrl(activeProductId));
+            stockForm.querySelector('input[name="stock"]').value = 0;
+            
+            bootstrap.Modal.getOrCreateInstance(stockModalEl).show();
+        });
+    });
+
+    // Handle form submit strictly
+    stockForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const originalText = btnSaveStock.innerHTML;
+        const formData = new FormData(this);
+        const requestUrl = stockForm.getAttribute('action'); // Consistent URL access
+
+        // UI Feedback: Button Loading
+        btnSaveStock.disabled = true;
+        btnSaveStock.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Menyimpan...';
+
+        try {
+            const response = await fetch(requestUrl, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                }
+            });
+
+            // Check if JSON
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                throw new Error('Server returned non-JSON response. Check your server logs.');
+            }
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                // Update table row values
+                const valSpan = document.querySelector(`.stock-val-${activeProductId}`);
+                if (valSpan) {
+                    valSpan.textContent = data.new_stock;
+                    
+                    // Update color state
+                    valSpan.classList.remove('text-danger', 'text-warning', 'text-success');
+                    if (data.new_stock == 0) valSpan.classList.add('text-danger');
+                    else if (data.new_stock <= 5) valSpan.classList.add('text-warning');
+                    else valSpan.classList.add('text-success');
+                    
+                    // Update trigger button data-stock for next modal open
+                    const triggerBtn = document.querySelector(`.btn-edit-stock[data-id="${activeProductId}"]`);
+                    if (triggerBtn) triggerBtn.dataset.stock = data.new_stock;
+                }
+
+                // Close modal
+                bootstrap.Modal.getOrCreateInstance(stockModalEl).hide();
+            } else {
+                alert(data.message || 'Terjadi kesalahan saat mengupdate stok.');
+            }
+        } catch (error) {
+            console.error('Update Stock Error:', error);
+            alert('Kesalahan sistem: ' + error.message);
+        } finally {
+            // ALWAYS restore button state
+            btnSaveStock.disabled = false;
+            btnSaveStock.innerHTML = originalText;
+        }
+    });
+});
+</script>
+@endsection
 @endsection

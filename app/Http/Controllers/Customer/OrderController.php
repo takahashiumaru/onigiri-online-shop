@@ -13,9 +13,28 @@ class OrderController extends Controller
     {
         $user = $request->user();
 
+        // queries for counts (unfiltered by tab)
+        $countQuery = Order::where('user_id', $user->id);
+        
+        // date range filter should apply to counts too if provided
+        if ($request->filled('from')) {
+            $countQuery->whereDate('created_at', '>=', $request->input('from'));
+        }
+        if ($request->filled('to')) {
+            $countQuery->whereDate('created_at', '<=', $request->input('to'));
+        }
+
+        $counts = [
+            'all' => (clone $countQuery)->count(),
+            'waiting' => (clone $countQuery)->whereIn('status', ['pending', 'processing'])->count(),
+            'shipping' => (clone $countQuery)->where('status', 'shipped')->count(),
+            'done' => (clone $countQuery)->where('status', 'delivered')->count(),
+            'cancelled' => (clone $countQuery)->where('status', 'cancelled')->count(),
+        ];
+
         $query = Order::where('user_id', $user->id)->orderBy('created_at', 'desc');
 
-        // date range filter (server-side)
+        // date range filter (main query)
         if ($request->filled('from')) {
             $query->whereDate('created_at', '>=', $request->input('from'));
         }
@@ -37,10 +56,10 @@ class OrderController extends Controller
             }
         }
 
-        // eager-load product on items so views can access product images without extra queries
+        // eager-load product on items
         $orders = $query->with('items.product')->paginate(10)->appends($request->except('page'));
 
-        return view('customer.orders', compact('orders'));
+        return view('customer.orders', compact('orders', 'counts'));
     }
 
     public function show(Order $order)
@@ -71,16 +90,25 @@ class OrderController extends Controller
             return redirect()->back()->with('error', 'Pesanan tidak dapat dibatalkan pada status saat ini.');
         }
 
-        // Ubah status pesanan menjadi cancelled
-        $order->status = 'cancelled';
+        \DB::transaction(function() use ($order) {
+            // Kembalikan stok untuk setiap item di pesanan ini
+            foreach ($order->items as $item) {
+                if ($item->product) {
+                    $item->product->increment('stock', $item->quantity);
+                }
+            }
 
-        // Jika perlu, Anda bisa sesuaikan payment_status juga; contoh:
-        if ($order->payment_status !== 'paid') {
-            $order->payment_status = 'failed';
-        }
+            // Ubah status pesanan menjadi cancelled
+            $order->status = 'cancelled';
 
-        $order->save();
+            // Jika belum bayar, tandai payment_status sebagai failed
+            if ($order->payment_status === 'pending') {
+                $order->payment_status = 'failed';
+            }
 
-        return redirect()->back()->with('success', 'Pesanan berhasil dibatalkan.');
+            $order->save();
+        });
+
+        return redirect()->back()->with('success', 'Pesanan berhasil dibatalkan dan stok telah dikembalikan.');
     }
 }

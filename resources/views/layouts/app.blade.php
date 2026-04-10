@@ -14,10 +14,13 @@
     <style>
         /* ========== DESIGN TOKENS ========== */
         :root {
-            --brand: #03AC0E;
-            --brand-hover: #029a0c;
-            --brand-light: #e8f8e9;
-            --brand-50: rgba(3,172,14,.06);
+            /* PALETTE: mudah diubah di sini */
+            --brand: #ef4444;                 /* primary red */
+            --brand-600: #dc2626;             /* hover / darker */
+            --brand-hover: var(--brand-600);
+            --brand-light: #fff1f2;           /* light red background */
+            --brand-rgb: 239,68,68;           /* used for rgba(...) */
+            --brand-50: rgba(var(--brand-rgb), .06);
 
             --bg: #f3f4f5;
             --surface: #ffffff;
@@ -27,7 +30,8 @@
             --text-tertiary: #9fa6b2;
             --border: #e5e7eb;
             --border-light: #f0f0f0;
-            --danger: #ef4444;
+            /* Danger / emphasis teks gelap untuk kontras */
+            --danger: #7f1d1d;
             --warning: #f59e0b;
             --info: #3b82f6;
 
@@ -156,7 +160,7 @@
         }
         .tp-search .form-control:focus {
             border-color: var(--brand);
-            box-shadow: 0 0 0 3px rgba(3,172,14,.1);
+            box-shadow: 0 0 0 3px rgba(var(--brand-rgb),.1);
         }
         .tp-search .btn-search {
             position: absolute;
@@ -202,7 +206,7 @@
         .tp-icon-btn .tp-badge {
             position: absolute;
             top: 2px; right: 2px;
-            background: var(--danger);
+            background: var(--brand);
             color: #fff;
             font-size: .6rem;
             font-weight: 700;
@@ -246,7 +250,7 @@
             font-weight: 700;
             font-size: .85rem;
             color: #fff;
-            background: linear-gradient(135deg, var(--brand), #02870b);
+            background: linear-gradient(135deg, var(--brand), var(--brand-600));
             flex-shrink: 0;
         }
         .tp-avatar img { width: 100%; height: 100%; object-fit: cover; }
@@ -276,7 +280,7 @@
             transition: background var(--transition);
         }
         .tp-dropdown .dropdown-item:hover { background: var(--brand-50); color: var(--brand); }
-        .tp-dropdown .dropdown-item.text-danger:hover { background: #fef2f2; }
+        .tp-dropdown .dropdown-item.text-danger:hover { background: var(--brand-light); color: var(--danger); }
         .tp-dropdown .dropdown-divider { border-color: var(--border-light); margin: 4px 0; }
 
         /* Auth buttons in navbar */
@@ -320,7 +324,7 @@
         .btn-primary:hover, .btn-primary:focus {
             background: var(--brand-hover);
             border-color: var(--brand-hover);
-            box-shadow: 0 4px 12px rgba(3,172,14,.25);
+            box-shadow: 0 4px 12px rgba(var(--brand-rgb),.25);
         }
         .btn-outline-primary {
             color: var(--brand);
@@ -361,7 +365,7 @@
         }
         .form-control:focus, .form-select:focus {
             border-color: var(--brand);
-            box-shadow: 0 0 0 3px rgba(3,172,14,.1);
+            box-shadow: 0 0 0 3px rgba(var(--brand-rgb),.1);
         }
         .form-label {
             font-size: .8rem;
@@ -447,12 +451,25 @@
             display: flex;
             flex-direction: column;
             height: 100%;
-            transition: box-shadow var(--transition), transform var(--transition), border-color var(--transition);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
         }
         .product-card:hover {
-            box-shadow: var(--shadow-md);
-            transform: translateY(-2px);
-            border-color: var(--border);
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-4px);
+            border-color: rgba(var(--brand-rgb), 0.3);
+        }
+        .product-image-wrapper {
+            position: relative;
+            background: #fff;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .product-image-wrapper img {
+            transition: transform 0.5s ease;
+        }
+        .product-card:hover .product-image-wrapper img {
+            transform: scale(1.08);
         }
         .product-card .product-img {
             width: 100%;
@@ -507,8 +524,9 @@
             font-weight: 600;
         }
 
-        .badge-available { background: var(--brand-light); color: #065f46; }
-        .badge-unavailable { background: #fef2f2; color: #991b1b; }
+        .badge-available { background: var(--brand-light); color: var(--brand-600); }
+        /* ubah unavailable / cancelled ke rentang warna brand */
+        .badge-unavailable { background: var(--brand-light); color: var(--danger); }
 
         /* ========== HERO ========== */
         .hero-section {
@@ -525,8 +543,9 @@
             padding: 12px 16px;
             border: none;
         }
-        .alert-success { background: var(--brand-light); color: #065f46; }
-        .alert-danger { background: #fef2f2; color: #991b1b; }
+        .alert-success { background: var(--brand-light); color: var(--brand-600); }
+        /* alert-danger / negative messages use brand-light + danger text */
+        .alert-danger { background: var(--brand-light); color: var(--danger); }
         .alert-warning { background: #fffbeb; color: #92400e; }
         .alert-info { background: #eff6ff; color: #1e40af; }
 
@@ -543,8 +562,8 @@
         .status-waiting { background: #fffbeb; color: #92400e; }
         .status-processing { background: #eff6ff; color: #1e40af; }
         .status-shipping { background: #f0fdf4; color: #166534; }
-        .status-completed { background: var(--brand-light); color: #065f46; }
-        .status-cancelled { background: #fef2f2; color: #991b1b; }
+        .status-completed { background: var(--brand-light); color: var(--brand-600); }
+        .status-cancelled { background: var(--brand-light); color: var(--danger); }
 
         /* ========== FOOTER ========== */
         .tp-footer {
@@ -643,6 +662,9 @@
 
         /* ========== PAGE-SPECIFIC ========== */
         @yield('page-styles')
+        /* make bootstrap danger visuals use theme colors */
+        .text-danger { color: var(--danger) !important; }
+        .bg-danger { background-color: var(--brand) !important; color: #fff !important; }
     </style>
 
     @yield('styles')
@@ -656,7 +678,9 @@
                 <div class="container d-flex justify-content-between align-items-center">
                     <div class="d-flex gap-3">
                         <a href="{{ route('home') }}">Tentang Kami</a>
+                        @if(!auth()->check() || (!auth()->user()->isAdmin() && !auth()->user()->isCourier()))
                         <a href="{{ route('products') }}">Promo</a>
+                        @endif
                     </div>
                     <div class="d-flex gap-3">
                         @auth
@@ -671,8 +695,9 @@
 
             {{-- Desktop navbar --}}
             <div class="container tp-navbar-main tp-navbar-desktop" style="display:none;">
-                <a class="tp-brand" href="{{ route('home') }}">🍙 <span>Suki</span>Onigiri</a>
+                <a class="tp-brand" href="{{ auth()->check() && auth()->user()->isCourier() ? route('courier.dashboard') : route('home') }}">🍙 <span>Suki</span>Onigiri</a>
 
+                @if(!auth()->check() || (!auth()->user()->isAdmin() && !auth()->user()->isCourier()))
                 <a href="{{ route('products') }}" class="tp-category-btn">
                     <i class="bi bi-grid"></i> Kategori
                 </a>
@@ -683,6 +708,11 @@
                         <button class="btn-search" type="submit"><i class="bi bi-search"></i></button>
                     </form>
                 </div>
+                @else
+                <div class="tp-search" style="visibility: hidden;">
+                    <!-- Spacer -->
+                </div>
+                @endif
 
                 <div class="tp-nav-icons">
                     @auth
@@ -691,7 +721,7 @@
                             @php $orderAlerts = auth()->user()->orders()->whereIn('status',['waiting_payment','waiting_confirmation','processing','shipping'])->count(); @endphp
                             @if($orderAlerts)<span class="tp-badge">{{ $orderAlerts }}</span>@endif
                         </a>
-                        @if(!auth()->user()->isAdmin())
+                        @if(!auth()->user()->isAdmin() && !auth()->user()->isCourier())
                         <a href="{{ route('cart.index') }}" class="tp-icon-btn" title="Keranjang">
                             <i class="bi bi-cart3"></i>
                             @php $cartCount = auth()->user()->cartItems()->count(); @endphp
@@ -706,23 +736,29 @@
                     <div class="dropdown">
                         <button class="tp-user-btn" data-bs-toggle="dropdown" aria-expanded="false">
                             <div class="tp-avatar">
-                                @if(auth()->user()->avatar)
-                                    <img src="{{ asset('storage/'.auth()->user()->avatar) }}" alt="">
+                                @php $userPhoto = auth()->user()->avatar ?? auth()->user()->photo; @endphp
+                                @if($userPhoto)
+                                    <img src="{{ asset('storage/'.$userPhoto) }}" alt="">
                                 @else
-                                    {{ strtoupper(substr(auth()->user()->name,0,1)) }}
+                                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                                 @endif
                             </div>
                             <div class="tp-user-info d-none d-xl-block">
                                 <div class="tp-user-name">{{ Str::limit(auth()->user()->name, 16) }}</div>
-                                <div class="tp-user-label">{{ auth()->user()->isAdmin() ? 'Admin' : 'Member' }}</div>
+                                <div class="tp-user-label">{{ auth()->user()->isAdmin() ? 'Admin' : (auth()->user()->isCourier() ? 'Kurir' : 'Member') }}</div>
                             </div>
                             <i class="bi bi-chevron-down" style="font-size:.7rem;color:var(--text-tertiary);"></i>
                         </button>
                         <ul class="dropdown-menu tp-dropdown dropdown-menu-end">
                             <li><a class="dropdown-item" href="{{ route('profile.show') }}"><i class="bi bi-person-circle"></i>Profil Saya</a></li>
+                            @if(!auth()->user()->isCourier())
                             <li><a class="dropdown-item" href="{{ route('orders.index') }}"><i class="bi bi-bag-check"></i>Pesanan</a></li>
+                            @endif
                             @if(auth()->user()->isAdmin())
-                            <li><a class="dropdown-item" href="{{ route('admin.dashboard') }}"><i class="bi bi-speedometer2"></i>Dashboard</a></li>
+                            <li><a class="dropdown-item" href="{{ route('admin.dashboard') }}"><i class="bi bi-speedometer2"></i>Dashboard Admin</a></li>
+                            @endif
+                            @if(auth()->user()->isCourier())
+                            <li><a class="dropdown-item" href="{{ route('courier.dashboard') }}"><i class="bi bi-box-seam"></i>Dashboard Kurir</a></li>
                             @endif
                             <li><hr class="dropdown-divider"></li>
                             <li>
@@ -744,20 +780,26 @@
 
             {{-- Mobile navbar --}}
             <div class="container tp-navbar-main tp-navbar-mobile" style="display:none;">
-                <a class="tp-brand" href="{{ route('home') }}" style="font-size:1.05rem;">🍙 <span>Onigiri</span>Shop</a>
+                <a class="tp-brand" href="{{ auth()->check() && auth()->user()->isCourier() ? route('courier.dashboard') : route('home') }}" style="font-size:1.05rem;">🍙 <span>Onigiri</span>Shop</a>
+                @if(!auth()->check() || (!auth()->user()->isAdmin() && !auth()->user()->isCourier()))
                 <div class="tp-search" style="min-width:0;">
                     <form action="{{ route('products') }}" method="GET">
                         <input name="q" type="search" class="form-control form-control-sm" placeholder="Cari..." value="{{ request('q') }}" style="padding:8px 40px 8px 12px; font-size:.8rem;">
                         <button class="btn-search" type="submit" style="width:30px;height:30px;"><i class="bi bi-search" style="font-size:.8rem;"></i></button>
                     </form>
                 </div>
+                @else
+                <div style="flex: 1;"></div>
+                @endif
                 <div class="tp-nav-icons">
                     @auth
+                        @if(!auth()->user()->isAdmin() && !auth()->user()->isCourier())
                         <a href="{{ route('cart.index') }}" class="tp-icon-btn" style="width:36px;height:36px;font-size:1.1rem;">
                             <i class="bi bi-cart3"></i>
                             @php $cartCount = auth()->user()->cartItems()->count(); @endphp
                             @if($cartCount)<span class="tp-badge" style="font-size:.55rem;">{{ $cartCount }}</span>@endif
                         </a>
+                        @endif
                     @endauth
                     <button class="tp-icon-btn" style="width:36px;height:36px;font-size:1.1rem;" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
                         <i class="bi bi-list"></i>
@@ -796,7 +838,9 @@
                         <h6>SukiOnigiri</h6>
                         <ul>
                             <li><a href="{{ route('home') }}">Tentang Kami</a></li>
+                            @if(!auth()->check() || (!auth()->user()->isAdmin() && !auth()->user()->isCourier()))
                             <li><a href="{{ route('products') }}">Semua Menu</a></li>
+                            @endif
                             <li><a href="#">Blog</a></li>
                         </ul>
                     </div>
@@ -841,10 +885,11 @@
             @auth
             <div class="tp-offcanvas-user">
                 <div class="tp-avatar">
-                    @if(auth()->user()->avatar)
-                        <img src="{{ asset('storage/'.auth()->user()->avatar) }}" alt="">
+                    @php $userPhoto = auth()->user()->avatar ?? auth()->user()->photo; @endphp
+                    @if($userPhoto)
+                        <img src="{{ asset('storage/'.$userPhoto) }}" alt="">
                     @else
-                        {{ strtoupper(substr(auth()->user()->name,0,1)) }}
+                        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                     @endif
                 </div>
                 <div>
@@ -856,16 +901,20 @@
             @endauth
 
             <a href="{{ route('home') }}" class="tp-offcanvas-link"><i class="bi bi-house"></i> Beranda</a>
+            @if(!auth()->check() || (!auth()->user()->isAdmin() && !auth()->user()->isCourier()))
             <a href="{{ route('products') }}" class="tp-offcanvas-link"><i class="bi bi-grid-3x3-gap"></i> Menu</a>
+            @endif
 
             @auth
                 <div class="tp-offcanvas-divider"></div>
+                @if(!auth()->user()->isAdmin() && !auth()->user()->isCourier())
                 <a href="{{ route('orders.index') }}" class="tp-offcanvas-link"><i class="bi bi-bag-check"></i> Pesanan Saya</a>
                 <a href="{{ route('cart.index') }}" class="tp-offcanvas-link">
                     <i class="bi bi-cart3"></i> Keranjang
                     @php $cartCount = auth()->user()->cartItems()->count(); @endphp
                     @if($cartCount)<span class="badge bg-danger rounded-pill ms-auto">{{ $cartCount }}</span>@endif
                 </a>
+                @endif
                 <a href="{{ route('notifications') }}" class="tp-offcanvas-link">
                     <i class="bi bi-bell"></i> Notifikasi
                     @php $orderAlerts = auth()->user()->orders()->whereIn('status',['waiting_payment','waiting_confirmation','processing','shipping'])->count(); @endphp

@@ -26,6 +26,9 @@ class LoginController extends Controller
             if (Auth::user()->isAdmin()) {
                 return redirect()->route('admin.dashboard');
             }
+            if (Auth::user()->isCourier()) {
+                return redirect()->route('courier.dashboard');
+            }
 
             return redirect()->intended(route('home'));
         }

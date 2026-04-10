@@ -45,9 +45,15 @@ class CartController extends Controller
             }
             $cartItem->update(['quantity' => $newQty]);
         } else {
+            // Default to 20 if quantity is 1 (standard "Buy" click) and it's a new item in cart
+            if ($quantity === 1 && $product->stock >= 20) {
+                $quantity = 20;
+            }
+
             if ($quantity > $product->stock) {
                 return back()->with('error', "Stok tidak mencukupi. Tersisa: {$product->stock}.");
             }
+
             CartItem::create([
                 'user_id'    => Auth::id(),
                 'product_id' => $product->id,

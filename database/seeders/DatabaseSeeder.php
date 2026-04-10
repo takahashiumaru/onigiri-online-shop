@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -30,6 +29,16 @@ class DatabaseSeeder extends Seeder
             'address' => 'Jl. Contoh No. 123, Jakarta',
         ]);
 
+        // Kurir
+        User::create([
+            'name' => 'Kurir Express',
+            'email' => 'kurir@onigiri.com',
+            'password' => bcrypt('password'),
+            'role' => 'courier',
+            'phone' => '08123456789',
+            'photo' => 'couriers/wy.png',
+        ]);
+
         // Products
         $products = [
             [
@@ -39,7 +48,7 @@ class DatabaseSeeder extends Seeder
                 'price' => 12000,
                 'stock' => 50,
                 'category' => 'classic',
-                'image' => 'products/tuna.jpeg',
+                'image' => 'products/tuna_mayo.jpg',
                 'is_available' => true,
             ],
             [
@@ -49,7 +58,7 @@ class DatabaseSeeder extends Seeder
                 'price' => 12000,
                 'stock' => 50,
                 'category' => 'classic',
-                'image' => 'products/hottuna.jpeg',
+                'image' => 'products/hot_tuna.jpg',
                 'is_available' => true,
             ],
             [
@@ -59,7 +68,7 @@ class DatabaseSeeder extends Seeder
                 'price' => 12000,
                 'stock' => 50,
                 'category' => 'classic',
-                'image' => 'products/hottuna.jpeg',
+                'image' => 'products/hot_tuna.jpg',
                 'is_available' => true,
             ],
             [
@@ -69,7 +78,7 @@ class DatabaseSeeder extends Seeder
                 'price' => 12000,
                 'stock' => 50,
                 'category' => 'classic',
-                'image' => 'products/chikenmayo.jpeg',
+                'image' => 'products/chicken_mayo.jpg',
                 'is_available' => true,
             ],
             [
@@ -79,7 +88,7 @@ class DatabaseSeeder extends Seeder
                 'price' => 12000,
                 'stock' => 50,
                 'category' => 'classic',
-                'image' => 'products/hotchiken.jpeg',
+                'image' => 'products/hot_chicken.jpg',
                 'is_available' => true,
             ],
             [
@@ -89,7 +98,7 @@ class DatabaseSeeder extends Seeder
                 'price' => 15000,
                 'stock' => 50,
                 'category' => 'premium',
-                'image' => 'products/shirasuteri.jpeg',
+                'image' => 'products/shirasu_teri.jpg',
                 'is_available' => true,
             ],
         ];

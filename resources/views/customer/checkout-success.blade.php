@@ -29,10 +29,19 @@
                         </button>
                         <p class="text-muted small mt-3">Pilih metode pembayaran: QRIS, Transfer Bank, GoPay, OVO, dll.</p>
                         @else
-                        <div class="alert alert-warning">
+                        <div class="alert alert-warning mb-4">
                             <i class="bi bi-exclamation-triangle me-2"></i>
-                            Token pembayaran tidak tersedia. Silakan hubungi admin.
+                            <strong>Token pembayaran tidak ditemukan.</strong>
+                            <p class="mb-0 mt-2 small text-start">Sistem gagal terhubung ke Midtrans secara otomatis. Hal ini bisa disebabkan karena koneksi internet terputus atau pengaturan Server Key belum diset oleh Admin.</p>
                         </div>
+
+                        <form action="{{ route('checkout.regenerate', $order) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-warning fw-bold px-4 py-2">
+                                <i class="bi bi-arrow-clockwise me-2"></i>Generate Token Ulang
+                            </button>
+                        </form>
+                        <p class="text-muted small mt-2">Coba klik tombol di atas untuk membuat ulang link pembayaran.</p>
                         @endif
                     @endif
 
@@ -101,6 +110,10 @@
     }
 
     function payNow() {
+        if (typeof snap === 'undefined') {
+            alert('Sistem sedang menyambung ke gateway pembayaran. Silakan tunggu sebentar dan klik lagi.');
+            return;
+        }
         snap.pay(snapToken, {
             onSuccess: function(result) {
                 // update segera via client, lalu redirect
