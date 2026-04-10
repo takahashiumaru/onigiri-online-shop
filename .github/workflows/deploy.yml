@@ -58,7 +58,7 @@ jobs:
               -p 8080:80 \
               -e APP_KEY=${{ secrets.APP_KEY }} \
               -e DB_HOST=mysql_db \
-              -e DB_DATABASE=aps \
+              -e DB_DATABASE=laravel_payment \
               -e DB_USERNAME=umarvps \
               -e DB_PASSWORD=umarvps \
               image-uaps
