@@ -68,9 +68,6 @@ sed -i 's/DB_HOST=127.0.0.1/DB_HOST=mysql_db/' .env\n\
 \n\
 echo 'Setting up database and cache...'\n\
 php artisan optimize:clear\n\
-php artisan session:table || true\n\
-php artisan cache:table || true\n\
-php artisan queue:table || true\n\
 php artisan migrate --force\n\
 php artisan storage:link || true\n\
 php artisan config:cache\n\
