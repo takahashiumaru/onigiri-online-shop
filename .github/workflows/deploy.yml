@@ -61,6 +61,9 @@ jobs:
               -e DB_DATABASE=laravel_payment \
               -e DB_USERNAME=umarvps \
               -e DB_PASSWORD=umarvps \
+              -e MIDTRANS_SERVER_KEY=SB-Mid-server-5qAQr0XZ7NudVvfZVA5ScgjD \
+              -e MIDTRANS_CLIENT_KEY=SB-Mid-client-ehbkE64Zew8-X538 \
+              -e MIDTRANS_IS_PRODUCTION=false \
               image-uaps
 
             # 7. Bersihkan resource Docker (sampah image lama) yang tidak terpakai
