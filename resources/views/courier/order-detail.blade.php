@@ -232,19 +232,33 @@
             <!-- Clock Widget -->
             <div class="clock-widget">
                 <div class="clock-icon-wrap">
-                    <i class="bi bi-clock-fill"></i>
+                    <i class="bi bi-{{ $order->status === 'delivered' ? 'camera-fill' : 'clock-fill' }}"></i>
                 </div>
                 <div class="clock-body">
                     <div class="clock-time">
                         <span id="clockHMS">--:--</span><span class="clock-seconds" id="clockSec">:--</span>
                     </div>
                     <div class="clock-date">
-                        <span class="clock-live-dot"></span>
+                        @if($order->status === 'delivered')
+                            <i class="bi bi-camera-fill me-1" style="font-size:0.65rem;"></i>
+                        @else
+                            <span class="clock-live-dot"></span>
+                        @endif
                         <span id="clockDate">-- --- ----</span>
                     </div>
                 </div>
-                <div class="clock-badge">WIB</div>
+                <div class="clock-badge">
+                    @if($order->status === 'delivered')
+                        <i class="bi bi-check2 me-1"></i>Terkirim
+                    @else
+                        WIB
+                    @endif
+                </div>
             </div>
+            {{-- Embed delivered timestamp for JS --}}
+            @if($order->status === 'delivered')
+            <script>window.__deliveredAt = {{ $order->updated_at->timestamp }};</script>
+            @endif
 
             <!-- Camera Box -->
             <div class="camera-card mb-4" style="{{ $order->status === 'delivered' ? 'background: transparent; border-color: var(--brand-light);' : '' }}">
@@ -337,24 +351,33 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    // ─── WIB Live Clock ──────────────────────────────────────────────────────
+    // ─── Clock Widget ────────────────────────────────────────────────────────
     const elHMS  = document.getElementById('clockHMS');
     const elSec  = document.getElementById('clockSec');
     const elDate = document.getElementById('clockDate');
     const DAYS   = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
-    const MONTHS = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+    const MONTHS = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 
-    function tickClock() {
-        const now = new Date();
+    function renderTime(wib) {
         const pad = n => String(n).padStart(2, '0');
-        const wib = new Date(now.getTime() + 7 * 60 * 60 * 1000); // UTC+7
-
         elHMS.textContent  = `${pad(wib.getUTCHours())}:${pad(wib.getUTCMinutes())}`;
         elSec.textContent  = `:${pad(wib.getUTCSeconds())}`;
         elDate.textContent = `${DAYS[wib.getUTCDay()]}, ${wib.getUTCDate()} ${MONTHS[wib.getUTCMonth()]} ${wib.getUTCFullYear()}`;
     }
-    tickClock();
-    setInterval(tickClock, 1000);
+
+    if (window.__deliveredAt) {
+        // Order sudah terkirim → tampilkan waktu foto diambil (statis, tidak bergerak)
+        const wib = new Date((window.__deliveredAt * 1000) + 7 * 60 * 60 * 1000);
+        renderTime(wib);
+    } else {
+        // Order belum selesai → jam live WIB
+        function tickClock() {
+            const wib = new Date(Date.now() + 7 * 60 * 60 * 1000);
+            renderTime(wib);
+        }
+        tickClock();
+        setInterval(tickClock, 1000);
+    }
 
 
     // Elemen yang ada hanya saat status bukan 'delivered'
