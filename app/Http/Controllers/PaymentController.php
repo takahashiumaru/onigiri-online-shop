@@ -38,7 +38,12 @@ class PaymentController extends Controller
                 $order->save();
             }
         } elseif (in_array($txStatus, ['deny', 'cancel', 'expire', 'expired'])) {
-            $order->payment_status = 'failed';
+            // Jika sebelumnya belum dibatalkan, kembalikan stok
+            if ($order->status !== 'cancelled') {
+                $order->restoreStock();
+            }
+            
+            $order->payment_status = ($txStatus === 'expire' || $txStatus === 'expired') ? 'expired' : 'failed';
             $order->status = 'cancelled';
             $order->save();
         } elseif ($txStatus === 'pending') {
@@ -91,14 +96,5 @@ class PaymentController extends Controller
         }
 
         return response()->json(['ok' => true]);
-    }
-
-    private function restoreStock(Order $order): void
-    {
-        foreach ($order->items as $item) {
-            if ($item->product) {
-                $item->product->increment('stock', $item->quantity);
-            }
-        }
     }
 }

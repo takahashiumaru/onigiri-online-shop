@@ -87,4 +87,16 @@ class Order extends Model
             default => 'secondary',
         };
     }
+
+    /**
+     * Restore product stock from order items.
+     */
+    public function restoreStock(): void
+    {
+        foreach ($this->items as $item) {
+            if ($item->product) {
+                $item->product->increment('stock', $item->quantity);
+            }
+        }
+    }
 }

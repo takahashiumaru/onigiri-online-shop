@@ -1,75 +1,146 @@
 @extends('layouts.app')
 
-@section('title', 'Pembayaran')
+@section('title', 'Status Pesanan')
+
+@section('page-styles')
+    .success-card {
+        border-radius: var(--radius-xl);
+        overflow: hidden;
+    }
+    .success-header {
+        background: #fff;
+        padding: 40px 20px;
+        text-align: center;
+        border-bottom: 1px solid var(--border-light);
+    }
+    .success-icon-wrapper {
+        width: 80px;
+        height: 80px;
+        background: var(--brand-50);
+        border-radius: var(--radius-full);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        font-size: 3rem;
+        color: var(--brand);
+    }
+    .success-icon-wrapper.is-cancelled {
+        background: #f1f5f9;
+        color: #64748b;
+    }
+    .order-summary-box {
+        background: var(--surface-secondary);
+        border-radius: var(--radius-lg);
+        padding: 20px;
+    }
+    .payment-amount {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: var(--brand);
+    }
+    .payment-amount.is-cancelled {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+    }
+    .item-row {
+        padding: 10px 0;
+        border-bottom: 1px solid var(--border-light);
+    }
+    .item-row:last-child {
+        border-bottom: none;
+    }
+@endsection
 
 @section('content')
 <div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-lg-7">
-            <div class="card text-center">
-                <div class="card-body p-5">
-                    @if($order->payment_status === 'paid')
-                        <div style="font-size: 5rem;">✅</div>
-                        <h3 class="fw-bold mt-3 text-success">Pembayaran Berhasil!</h3>
-                        <p class="text-muted">Pesanan <strong>{{ $order->order_number }}</strong> sedang diproses.</p>
-                    @else
-                        <div style="font-size: 5rem;">🍙</div>
-                        <h3 class="fw-bold mt-3">Pesanan Dibuat!</h3>
-                        <p class="text-muted mb-1">Nomor Pesanan: <strong>{{ $order->order_number }}</strong></p>
-                        <p class="text-muted">Total: <strong style="color: #E63946;">Rp {{ number_format($order->total, 0, ',', '.') }}</strong></p>
-
-                        <div class="alert alert-info my-4">
-                            <i class="bi bi-info-circle me-2"></i>
-                            Selesaikan pembayaran Anda melalui Midtrans. Klik tombol di bawah.
-                        </div>
-
-                        @if($snapToken)
-                        <button id="pay-btn" class="btn btn-primary btn-lg px-5 py-3 fw-bold">
-                            <i class="bi bi-credit-card me-2"></i>Bayar Sekarang
-                        </button>
-                        <p class="text-muted small mt-3">Pilih metode pembayaran: QRIS, Transfer Bank, GoPay, OVO, dll.</p>
+        <div class="col-lg-6">
+            <div class="card success-card shadow-sm border-0">
+                <div class="success-header">
+                    <div class="success-icon-wrapper {{ $order->status === 'cancelled' ? 'is-cancelled' : '' }}">
+                        @if($order->payment_status === 'paid')
+                            <i class="bi bi-check-circle-fill"></i>
+                        @elseif($order->status === 'cancelled')
+                            <i class="bi bi-x-circle-fill"></i>
                         @else
-                        <div class="alert alert-warning mb-4">
-                            <i class="bi bi-exclamation-triangle me-2"></i>
-                            <strong>Token pembayaran tidak ditemukan.</strong>
-                            <p class="mb-0 mt-2 small text-start">Sistem gagal terhubung ke Midtrans secara otomatis. Hal ini bisa disebabkan karena koneksi internet terputus atau pengaturan Server Key belum diset oleh Admin.</p>
-                        </div>
-
-                        <form action="{{ route('checkout.regenerate', $order) }}" method="POST">
-                            @csrf
-                            <button type="submit" class="btn btn-warning fw-bold px-4 py-2">
-                                <i class="bi bi-arrow-clockwise me-2"></i>Generate Token Ulang
-                            </button>
-                        </form>
-                        <p class="text-muted small mt-2">Coba klik tombol di atas untuk membuat ulang link pembayaran.</p>
+                            <i class="bi bi-clock-fill text-warning"></i>
                         @endif
-                    @endif
+                    </div>
+                    
+                    <h3 class="fw-bold mb-1">
+                        @if($order->payment_status === 'paid')
+                            Pembayaran Berhasil!
+                        @elseif($order->status === 'cancelled')
+                            Pesanan Dibatalkan
+                        @else
+                            Menunggu Pembayaran
+                        @endif
+                    </h3>
+                    <p class="text-muted small">Nomor Pesanan: #{{ $order->order_number }}</p>
+                </div>
 
-                    <!-- Order Summary -->
-                    <div class="card mt-4 text-start">
-                        <div class="card-body p-3">
-                            <h6 class="fw-semibold mb-2">Ringkasan Pesanan:</h6>
-                            @foreach($order->items as $item)
-                            <div class="d-flex justify-content-between small text-muted mb-1">
-                                <span>{{ $item->product_name }} x{{ $item->quantity }}</span>
-                                <span>Rp {{ number_format($item->subtotal, 0, ',', '.') }}</span>
-                            </div>
-                            @endforeach
-                            <hr class="my-2">
-                            <div class="d-flex justify-content-between fw-bold">
-                                <span>Total</span>
-                                <span style="color:#E63946;">Rp {{ number_format($order->total, 0, ',', '.') }}</span>
-                            </div>
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <span class="text-muted small text-uppercase fw-bold">Total Tagihan</span>
+                        <div class="payment-amount mt-1 {{ $order->status === 'cancelled' ? 'is-cancelled' : '' }}">
+                            Rp {{ number_format($order->total, 0, ',', '.') }}
                         </div>
                     </div>
 
-                    <div class="d-flex gap-2 justify-content-center mt-4">
-                        <a href="{{ route('orders.index') }}" class="btn btn-outline-primary">
-                            <i class="bi bi-receipt me-2"></i>Riwayat Pesanan
+                    @if($order->status === 'cancelled')
+                        <div class="alert alert-secondary d-flex align-items-center gap-3 mb-4">
+                            <i class="bi bi-exclamation-circle fs-4"></i>
+                            <div class="small">
+                                Pesanan ini telah dibatalkan karena melewati batas waktu pembayaran.
+                            </div>
+                        </div>
+                        <a href="{{ route('products') }}" class="btn btn-primary w-100 py-3 fw-bold mb-3">
+                            <i class="bi bi-cart-plus me-2"></i>Belanja Lagi
                         </a>
-                        <a href="{{ route('products') }}" class="btn btn-outline-secondary">
-                            <i class="bi bi-shop me-2"></i>Lanjut Belanja
-                        </a>
+                    @elseif($order->payment_status !== 'paid')
+                        <div class="alert alert-info d-flex align-items-center gap-3 mb-4">
+                            <i class="bi bi-info-circle fs-4"></i>
+                            <div class="small">
+                                Silakan selesaikan pembayaran Anda melalui Midtrans agar pesanan segera kami proses.
+                            </div>
+                        </div>
+
+                        @if($snapToken)
+                            <button id="pay-btn" class="btn btn-primary w-100 py-3 fw-bold mb-4">
+                                <i class="bi bi-credit-card me-2"></i>Bayar Sekarang
+                            </button>
+                        @else
+                            <form action="{{ route('checkout.regenerate', $order) }}" method="POST" class="mb-4">
+                                @csrf
+                                <button type="submit" class="btn btn-warning w-100 py-3 fw-bold">
+                                    <i class="bi bi-arrow-clockwise me-2"></i>Generate Token Pembayaran
+                                </button>
+                            </form>
+                        @endif
+                    @endif
+
+                    <div class="order-summary-box mb-4">
+                        <h6 class="fw-bold mb-3 small text-uppercase">Ringkasan Pesanan</h6>
+                        @foreach($order->items as $item)
+                            <div class="item-row d-flex justify-content-between align-items-center">
+                                <span class="small text-secondary">{{ $item->product_name }} x{{ $item->quantity }}</span>
+                                <span class="small fw-bold">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</span>
+                            </div>
+                        @endforeach
+                        <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
+                            <span class="small text-muted">Ongkos Kirim</span>
+                            <span class="small fw-bold">Rp {{ number_format($order->shipping_cost, 0, ',', '.') }}</span>
+                        </div>
+                    </div>
+
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <a href="{{ route('orders.index') }}" class="btn btn-outline-secondary w-100">Riwayat</a>
+                        </div>
+                        <div class="col-6">
+                            <a href="{{ route('home') }}" class="btn btn-outline-primary w-100">Beranda</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -79,7 +150,7 @@
 @endsection
 
 @section('scripts')
-@if($snapToken && $order->payment_status !== 'paid')
+@if($snapToken && $order->payment_status !== 'paid' && $order->status !== 'cancelled')
 @php
     $midtransScript = config('midtrans.is_production')
         ? 'https://app.midtrans.com/snap/snap.js'
@@ -96,7 +167,6 @@
     var orderNumber = '{{ $order->order_number }}';
 
     function postConfirm(result) {
-        // Sertakan credentials agar cookie/session dikirim (auth middleware diterima)
         return fetch(confirmUrl, {
             method: 'POST',
             credentials: 'same-origin',
@@ -110,39 +180,27 @@
     }
 
     function payNow() {
-        if (typeof snap === 'undefined') {
-            alert('Sistem sedang menyambung ke gateway pembayaran. Silakan tunggu sebentar dan klik lagi.');
-            return;
-        }
+        if (typeof snap === 'undefined') return;
         snap.pay(snapToken, {
             onSuccess: function(result) {
-                // update segera via client, lalu redirect
-                postConfirm(result)
-                    .then(function(response) {
-                        // lanjutkan meskipun response bukan 200 (server-side notification adalah sumber kebenaran)
-                        window.location.href = ordersUrl + '?payment=success';
-                    })
-                    .catch(function() {
-                        // jika fetch gagal, tetap redirect supaya user melihat halaman pesanan
-                        window.location.href = ordersUrl + '?payment=success';
-                    });
+                postConfirm(result).then(function() {
+                    window.location.href = ordersUrl + '?payment=success';
+                });
             },
             onPending: function(result) {
                 window.location.href = ordersUrl + '?payment=pending';
             },
             onError: function(result) {
-                alert('Pembayaran gagal. Silakan coba lagi dari halaman pesanan.');
-            },
-            onClose: function() {
-                // User closed popup, do nothing
+                alert('Pembayaran gagal.');
             }
         });
     }
 
-    document.getElementById('pay-btn').addEventListener('click', payNow);
-
-    // Auto open after 800ms
-    setTimeout(payNow, 800);
+    const payBtn = document.getElementById('pay-btn');
+    if (payBtn) {
+        payBtn.addEventListener('click', payNow);
+        setTimeout(payNow, 1000);
+    }
 </script>
 @endif
 @endsection

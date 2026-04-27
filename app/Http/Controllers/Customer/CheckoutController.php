@@ -90,6 +90,9 @@ class CheckoutController extends Controller
                 'phone' => Auth::user()->phone ?? $order->shipping_phone,
             ],
             'item_details' => $items,
+            'callbacks' => [
+                'finish' => route('checkout.success', $order),
+            ],
         ];
 
         $snapToken = $this->attemptGetSnapToken($params);
@@ -198,6 +201,9 @@ class CheckoutController extends Controller
                     'phone' => $user->phone ?? $request->shipping_phone,
                 ],
                 'item_details' => $itemDetails,
+                'callbacks' => [
+                    'finish' => route('checkout.success', $order),
+                ],
             ];
 
             // Try to get Snap token with controlled timeout & retries.
@@ -241,10 +247,58 @@ class CheckoutController extends Controller
             abort(403);
         }
 
+        // Jika status lokal masih pending, coba sinkronisasi dengan Midtrans
+        if ($order->status === 'pending' || $order->payment_status === 'pending') {
+            $this->syncStatusWithMidtrans($order);
+        }
+
         $order->load('items');
         $snapToken = $order->midtrans_snap_token;
 
         return view('customer.checkout-success', compact('order', 'snapToken'));
+    }
+
+    /**
+     * Sync order status with Midtrans API for real-time updates on page load.
+     */
+    private function syncStatusWithMidtrans(Order $order): void
+    {
+        $serverKey = config('midtrans.server_key');
+        if (empty($serverKey)) return;
+
+        $baseUrl = config('midtrans.is_production') 
+            ? 'https://api.midtrans.com/v2/' 
+            : 'https://api.sandbox.midtrans.com/v2/';
+        
+        try {
+            $response = Http::withBasicAuth($serverKey, '')
+                ->timeout(5)
+                ->get($baseUrl . $order->order_number . '/status');
+
+            if ($response->successful()) {
+                $data = $response->json();
+                $txStatus = strtolower($data['transaction_status'] ?? '');
+
+                if (in_array($txStatus, ['capture', 'settlement', 'success'])) {
+                    $order->update([
+                        'payment_status' => 'paid',
+                        'status' => 'processing'
+                    ]);
+                } elseif (in_array($txStatus, ['deny', 'cancel', 'expire', 'expired'])) {
+                    // Restore stock if not already cancelled
+                    if ($order->status !== 'cancelled') {
+                        $order->restoreStock();
+                    }
+
+                    $order->update([
+                        'payment_status' => ($txStatus === 'expire' || $txStatus === 'expired') ? 'expired' : 'failed',
+                        'status' => 'cancelled'
+                    ]);
+                }
+            }
+        } catch (\Exception $e) {
+            Log::warning("Failed to sync Midtrans status for {$order->order_number}: " . $e->getMessage());
+        }
     }
 
     /**

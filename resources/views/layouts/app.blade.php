@@ -662,9 +662,6 @@
 
         /* ========== PAGE-SPECIFIC ========== */
         @yield('page-styles')
-        /* make bootstrap danger visuals use theme colors */
-        .text-danger { color: var(--danger) !important; }
-        .bg-danger { background-color: var(--brand) !important; color: #fff !important; }
     </style>
 
     @yield('styles')
@@ -801,30 +798,46 @@
                         </a>
                         @endif
                     @endauth
-                    <button class="tp-icon-btn" style="width:36px;height:36px;font-size:1.1rem;" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
-                        <i class="bi bi-list"></i>
-                    </button>
                 </div>
             </div>
         </nav>
 
-        <!-- ============ MAIN CONTENT ============ -->
+        <!-- ============ CONTENT ============ -->
         <main class="site-content">
             @if(session('success'))
-            <div class="container mt-3">
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <div class="container mt-3">
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="bi bi-check-circle me-2"></i>{{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
                 </div>
-            </div>
             @endif
+
             @if(session('error'))
-            <div class="container mt-3">
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ session('error') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <div class="container mt-3">
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="bi bi-exclamation-triangle me-2"></i>{{ session('error') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
                 </div>
-            </div>
+            @endif
+
+            @if(session('warning'))
+                <div class="container mt-3">
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <i class="bi bi-exclamation-circle me-2"></i>{{ session('warning') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                </div>
+            @endif
+
+            @if(session('info'))
+                <div class="container mt-3">
+                    <div class="alert alert-info alert-dismissible fade show" role="alert">
+                        <i class="bi bi-info-circle me-2"></i>{{ session('info') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                </div>
             @endif
 
             @yield('content')
@@ -834,123 +847,67 @@
         <footer class="tp-footer">
             <div class="container">
                 <div class="row g-4">
-                    <div class="col-6 col-md-3">
-                        <h6>SukiOnigiri</h6>
+                    <div class="col-lg-4 col-md-6">
+                        <h5 class="fw-800 mb-3" style="color:var(--text-primary);">🍙 <span>Suki</span>Onigiri</h5>
+                        <p class="small mb-4">Nikmati kelezatan onigiri Jepang yang dibuat segar setiap hari dengan bahan-bahan pilihan berkualitas tinggi.</p>
+                        <div class="d-flex gap-3">
+                            <a href="#" class="fs-5 text-secondary"><i class="bi bi-instagram"></i></a>
+                            <a href="#" class="fs-5 text-secondary"><i class="bi bi-facebook"></i></a>
+                            <a href="#" class="fs-5 text-secondary"><i class="bi bi-tiktok"></i></a>
+                            <a href="#" class="fs-5 text-secondary"><i class="bi bi-whatsapp"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-6">
+                        <h6>Suki Onigiri</h6>
                         <ul>
                             <li><a href="{{ route('home') }}">Tentang Kami</a></li>
-                            @if(!auth()->check() || (!auth()->user()->isAdmin() && !auth()->user()->isCourier()))
-                            <li><a href="{{ route('products') }}">Semua Menu</a></li>
-                            @endif
-                            <li><a href="#">Blog</a></li>
+                            <li><a href="{{ route('products') }}">Promo</a></li>
+                            <li><a href="#">Mitra</a></li>
+                            <li><a href="#">Karir</a></li>
                         </ul>
                     </div>
-                    <div class="col-6 col-md-3">
+                    <div class="col-lg-3 col-md-6">
                         <h6>Bantuan</h6>
                         <ul>
-                            <li><a href="#">Pusat Bantuan</a></li>
-                            <li><a href="#">Cara Belanja</a></li>
-                            <li><a href="#">Pengembalian</a></li>
-                        </ul>
-                    </div>
-                    <div class="col-6 col-md-3">
-                        <h6>Kebijakan</h6>
-                        <ul>
+                            <li><a href="#">Cara Pemesanan</a></li>
+                            <li><a href="#">Pembayaran</a></li>
+                            <li><a href="#">Pengiriman</a></li>
                             <li><a href="#">Syarat & Ketentuan</a></li>
-                            <li><a href="#">Kebijakan Privasi</a></li>
                         </ul>
                     </div>
-                    <div class="col-6 col-md-3">
+                    <div class="col-lg-3 col-md-6">
                         <h6>Hubungi Kami</h6>
-                        <ul>
-                            <li><i class="bi bi-whatsapp me-2"></i>+62 812-3456-7890</li>
-                            <li><i class="bi bi-envelope me-2"></i>hello@onigiri.shop</li>
-                            <li><i class="bi bi-geo-alt me-2"></i>Jakarta, Indonesia</li>
+                        <ul class="small">
+                            <li><i class="bi bi-geo-alt me-2"></i>Jl. Onigiri No. 123, Jakarta Selatan</li>
+                            <li><i class="bi bi-envelope me-2"></i>halo@sukionigiri.com</li>
+                            <li><i class="bi bi-telephone me-2"></i>+62 812 3456 7890</li>
                         </ul>
                     </div>
                 </div>
                 <div class="tp-footer-bottom">
-                    © {{ date('Y') }} SukiOnigiri. All rights reserved.
+                    &copy; {{ date('Y') }} Suki Onigiri. All rights reserved.
                 </div>
             </div>
         </footer>
     </div>
 
-    <!-- ============ MOBILE OFFCANVAS ============ -->
-    <div class="offcanvas offcanvas-end tp-offcanvas" tabindex="-1" id="mobileMenu">
-        <div class="offcanvas-header">
-            <h6 class="offcanvas-title mb-0">🍙 SukiOnigiri</h6>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
-        </div>
-        <div class="offcanvas-body p-0" style="padding:16px 20px !important;">
-            @auth
-            <div class="tp-offcanvas-user">
-                <div class="tp-avatar">
-                    @php $userPhoto = auth()->user()->avatar ?? auth()->user()->photo; @endphp
-                    @if($userPhoto)
-                        <img src="{{ asset('storage/'.$userPhoto) }}" alt="">
-                    @else
-                        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                    @endif
-                </div>
-                <div>
-                    <div style="font-weight:600;font-size:.9rem;">{{ auth()->user()->name }}</div>
-                    <div style="font-size:.75rem;color:var(--text-tertiary);">{{ auth()->user()->email }}</div>
-                </div>
-            </div>
-            <div class="tp-offcanvas-divider"></div>
-            @endauth
-
-            <a href="{{ route('home') }}" class="tp-offcanvas-link"><i class="bi bi-house"></i> Beranda</a>
-            @if(!auth()->check() || (!auth()->user()->isAdmin() && !auth()->user()->isCourier()))
-            <a href="{{ route('products') }}" class="tp-offcanvas-link"><i class="bi bi-grid-3x3-gap"></i> Menu</a>
-            @endif
-
-            @auth
-                <div class="tp-offcanvas-divider"></div>
-                @if(!auth()->user()->isAdmin() && !auth()->user()->isCourier())
-                <a href="{{ route('orders.index') }}" class="tp-offcanvas-link"><i class="bi bi-bag-check"></i> Pesanan Saya</a>
-                <a href="{{ route('cart.index') }}" class="tp-offcanvas-link">
-                    <i class="bi bi-cart3"></i> Keranjang
-                    @php $cartCount = auth()->user()->cartItems()->count(); @endphp
-                    @if($cartCount)<span class="badge bg-danger rounded-pill ms-auto">{{ $cartCount }}</span>@endif
-                </a>
-                @endif
-                <a href="{{ route('notifications') }}" class="tp-offcanvas-link">
-                    <i class="bi bi-bell"></i> Notifikasi
-                    @php $orderAlerts = auth()->user()->orders()->whereIn('status',['waiting_payment','waiting_confirmation','processing','shipping'])->count(); @endphp
-                    @if($orderAlerts)<span class="badge bg-danger rounded-pill ms-auto">{{ $orderAlerts }}</span>@endif
-                </a>
-                <a href="{{ route('profile.show') }}" class="tp-offcanvas-link"><i class="bi bi-person-circle"></i> Profil</a>
-
-                @if(auth()->user()->isAdmin())
-                <div class="tp-offcanvas-divider"></div>
-                <a href="{{ route('admin.dashboard') }}" class="tp-offcanvas-link"><i class="bi bi-speedometer2"></i> Dashboard Admin</a>
-                @endif
-
-                <div class="tp-offcanvas-divider"></div>
-                <form action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button type="submit" class="tp-offcanvas-link w-100 text-start border-0 bg-transparent" style="color:var(--danger);">
-                        <i class="bi bi-box-arrow-right" style="color:var(--danger);"></i> Keluar
-                    </button>
-                </form>
-            @else
-                <div class="tp-offcanvas-divider"></div>
-                <div class="d-grid gap-2 mt-2 px-2">
-                    <a href="{{ route('login') }}" class="btn btn-outline-primary">Masuk</a>
-                    <a href="{{ route('register') }}" class="btn btn-primary">Daftar</a>
-                </div>
-            @endauth
-        </div>
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('.tp-navbar');
+            if (window.scrollY > 10) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
         // Auto-dismiss alerts after 5s
         document.querySelectorAll('.alert-dismissible').forEach(el => {
             setTimeout(() => {
                 const bsAlert = bootstrap.Alert.getOrCreateInstance(el);
-                bsAlert.close();
+                if (bsAlert) bsAlert.close();
             }, 5000);
         });
     </script>

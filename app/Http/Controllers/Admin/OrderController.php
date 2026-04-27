@@ -72,6 +72,11 @@ class OrderController extends Controller
             $updateData['courier_id'] = $request->courier_id;
         }
 
+        // Jika status diubah ke cancelled, balikan stok
+        if ($request->status === 'cancelled' && $order->status !== 'cancelled') {
+            $order->restoreStock();
+        }
+
         $order->update($updateData);
 
         return back()->with('success', 'Status pesanan berhasil diperbarui!');
