@@ -16,6 +16,14 @@ use App\Http\Controllers\OrderItemRatingController;
 use App\Http\Controllers\CourierController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/api/health', function () {
+    return response()->json([
+        'status' => 'ok',
+        'version' => json_decode(file_get_contents(base_path('package.json')))->version ?? '1.0.0',
+        'timestamp' => now()->toIso8601String(),
+    ]);
+});
+
 // =====================
 // AUTH ROUTES
 // =====================
