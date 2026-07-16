@@ -172,7 +172,7 @@
                         </div>
                         <div class="d-flex gap-2 justify-content-end align-items-center">
                             <a href="{{ route('orders.show', $order) }}" class="btn btn-sm px-3 rounded-3 text-muted fw-bold border bg-white" style="font-size: 0.8rem;">Detail</a>
-                            @if($order->payment_status === 'pending' && !empty($order->midtrans_snap_token))
+                            @if($order->payment_status === 'pending' && $order->status !== 'cancelled')
                                 <a href="{{ route('checkout.success', $order) }}" class="btn btn-sm px-3 rounded-3 fw-bold shadow-sm" style="background-color: #ef4444; border-color: #ef4444; color: #fff; font-size: 0.8rem;">Bayar</a>
                             @endif
                         </div>

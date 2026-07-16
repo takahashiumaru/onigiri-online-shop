@@ -181,7 +181,7 @@
                     @endif
                 </div>
 
-                @if($order->payment_status === 'pending' && $order->midtrans_snap_token)
+                @if($order->payment_status === 'pending' && $order->status !== 'cancelled')
                 <div class="card-footer">
                     <a href="{{ route('checkout.success', $order) }}" class="btn btn-primary w-100 mb-2">
                         <i class="bi bi-credit-card me-2"></i>Selesaikan Pembayaran
