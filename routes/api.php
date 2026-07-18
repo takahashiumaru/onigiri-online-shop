@@ -8,9 +8,8 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::get('/version', function () {
-    $composerJson = json_decode(file_get_contents(base_path('composer.json')), true);
     return response()->json([
-        'version' => $composerJson['version'] ?? 'unknown'
+        'version' => \App\Http\Controllers\Controller::getVersion()
     ]);
 });
 
