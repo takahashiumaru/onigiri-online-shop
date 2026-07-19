@@ -15,11 +15,12 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\OrderItemRatingController;
 use App\Http\Controllers\CourierController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Controller;
 
 Route::get('/api/health', function () {
     return response()->json([
         'status' => 'ok',
-        'version' => json_decode(file_get_contents(base_path('package.json')))->version ?? '1.0.0',
+        'version' => Controller::getVersion(),
         'timestamp' => now()->toIso8601String(),
     ]);
 });
