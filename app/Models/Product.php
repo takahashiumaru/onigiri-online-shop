@@ -36,6 +36,11 @@ class Product extends Model
         return $this->hasMany(CartItem::class);
     }
 
+    public function getTotalSoldAttribute(): int
+    {
+        return (int) $this->orderItems()->sum('quantity');
+    }
+
     public function getFormattedPriceAttribute(): string
     {
         return 'Rp ' . number_format($this->price, 0, ',', '.');
