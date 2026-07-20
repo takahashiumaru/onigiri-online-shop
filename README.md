@@ -22,6 +22,8 @@ An online shop application built with Laravel 12, Vite, and Tailwind CSS.
 ### Public
 - `GET /api/version`: Returns the application version.
 - `GET /api/health`: Returns API, database connection status, and app version.
+- `GET /api/reports/daily`: Get daily paginated paid orders report (optional parameter `date`).
+- `GET /api/reports/monthly`: Get monthly paginated paid orders report (optional parameters `month` and `year`).
 
 ### Admin Routes (`/admin/*`) - Requires `auth:admin`
 - `GET /admin/dashboard`: Admin dashboard with stats (revenue, orders, stock).
