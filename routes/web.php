@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ReportController as ApiReportController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
@@ -16,6 +17,12 @@ use App\Http\Controllers\OrderItemRatingController;
 use App\Http\Controllers\CourierController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Controller;
+
+// API Routes
+Route::prefix('api')->group(function () {
+    Route::get('/reports/daily', [ApiReportController::class, 'daily']);
+    Route::get('/reports/monthly', [ApiReportController::class, 'monthly']);
+});
 
 Route::get('/api/health', function () {
     return response()->json([
