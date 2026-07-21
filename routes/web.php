@@ -24,14 +24,6 @@ Route::prefix('api')->group(function () {
     Route::get('/reports/monthly', [ApiReportController::class, 'monthly']);
 });
 
-Route::get('/api/health', function () {
-    return response()->json([
-        'status' => 'ok',
-        'version' => Controller::getVersion(),
-        'timestamp' => now()->toIso8601String(),
-    ]);
-});
-
 // =====================
 // AUTH ROUTES
 // =====================

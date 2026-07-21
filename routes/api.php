@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -9,7 +11,7 @@ Route::get('/user', function (Request $request) {
 
 Route::get('/version', function () {
     return response()->json([
-        'version' => \App\Http\Controllers\Controller::getVersion()
+        'version' => Controller::getVersion()
     ]);
 });
 
@@ -24,6 +26,8 @@ Route::get('/health', function () {
     return response()->json([
         'status' => 'ok',
         'database' => $dbStatus,
+        'version' => Controller::getVersion(),
+        'timestamp' => now()->toIso8601String(),
         'app_env' => config('app.env'),
         'app_debug' => config('app.debug'),
     ]);
