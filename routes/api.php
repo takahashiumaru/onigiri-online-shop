@@ -16,8 +16,14 @@ Route::get('/version', function () {
 });
 
 Route::get('/health', function () {
+    $dbStatus = 'disconnected';
+    $dbLatency = null;
+    
     try {
+        $startTime = microtime(true);
         DB::connection()->getPdo();
+        DB::select('SELECT 1');
+        $dbLatency = round((microtime(true) - $startTime) * 1000, 2);
         $dbStatus = 'connected';
     } catch (\Exception $e) {
         $dbStatus = 'disconnected';
@@ -25,7 +31,10 @@ Route::get('/health', function () {
 
     return response()->json([
         'status' => 'ok',
-        'database' => $dbStatus,
+        'database' => [
+            'status' => $dbStatus,
+            'latency_ms' => $dbLatency,
+        ],
         'version' => Controller::getVersion(),
         'timestamp' => now()->toIso8601String(),
         'app_env' => config('app.env'),
