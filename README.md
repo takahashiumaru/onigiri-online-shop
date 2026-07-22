@@ -19,6 +19,8 @@ An online shop application built with Laravel 12, Vite, and Tailwind CSS.
 7. Run `npm run build`.
 8. Run `php artisan serve` to start the development server.
 
+> **Note:** If you encounter `PDOException: could not find driver` during tests, ensure you have the `php-sqlite3` driver installed (`sudo apt install php-sqlite3`).
+
 ## API Endpoints
 ### Public
 - `GET /api/version`: Returns the application version (dynamically read from `composer.json`).
