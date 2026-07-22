@@ -9,6 +9,15 @@ use Carbon\Carbon;
 
 class ReportController extends Controller
 {
+    private function getStats($orders)
+    {
+        return [
+            'total_orders' => $orders->count(),
+            'total_revenue' => $orders->sum('total'),
+            'total_items' => $orders->sum(fn($o) => $o->items->sum('quantity')),
+        ];
+    }
+
     public function daily(Request $request)
     {
         $date = $request->date ? Carbon::parse($request->date) : Carbon::today();
@@ -18,11 +27,7 @@ class ReportController extends Controller
             ->with('user', 'items.product')
             ->get();
 
-        $stats = [
-            'total_orders' => $orders->count(),
-            'total_revenue' => $orders->sum('total'),
-            'total_items' => $orders->sum(fn($o) => $o->items->sum('quantity')),
-        ];
+        $stats = $this->getStats($orders);
 
         return view('admin.reports.daily', compact('orders', 'stats', 'date'));
     }
@@ -38,11 +43,7 @@ class ReportController extends Controller
             ->with('user', 'items.product')
             ->get();
 
-        $stats = [
-            'total_orders' => $orders->count(),
-            'total_revenue' => $orders->sum('total'),
-            'total_items' => $orders->sum(fn($o) => $o->items->sum('quantity')),
-        ];
+        $stats = $this->getStats($orders);
 
         return view('admin.reports.monthly', compact('orders', 'stats', 'month', 'year'));
     }
