@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
-use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
@@ -29,10 +29,10 @@ class ReportController extends Controller
     {
         $request->validate(['date' => 'nullable|date']);
         $date = $request->date ? Carbon::parse($request->date) : Carbon::today();
-        
+
         $orders = $this->getPaginatedOrders($date->copy()->startOfDay(), $date->copy()->endOfDay());
 
-        return response()->json($orders);
+        return $this->paginatedResponse($orders);
     }
 
     /**
@@ -44,7 +44,7 @@ class ReportController extends Controller
             'month' => 'nullable|integer|between:1,12',
             'year' => 'nullable|integer|min:2020',
         ]);
-        
+
         $date = Carbon::createFromDate(
             $request->year ?? date('Y'),
             $request->month ?? date('m'),
@@ -53,6 +53,6 @@ class ReportController extends Controller
 
         $orders = $this->getPaginatedOrders($date->copy()->startOfMonth(), $date->copy()->endOfMonth());
 
-        return response()->json($orders);
+        return $this->paginatedResponse($orders);
     }
 }

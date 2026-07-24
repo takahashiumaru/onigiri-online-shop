@@ -28,6 +28,17 @@ An online shop application built with Laravel 12, Vite, and Tailwind CSS.
 - `GET /api/reports/daily`: Get daily paginated paid orders report (optional parameter `date`).
 - `GET /api/reports/monthly`: Get monthly paginated paid orders report (optional parameters `month` and `year`).
 
+**Public API Response Shape (for paginated endpoints):**
+```json
+{
+  "data": [ ... ],
+  "total": 100,
+  "page": 1,
+  "pageSize": 15,
+  "totalPages": 7
+}
+```
+
 ### Admin Routes (`/admin/*`) - Requires `auth:admin`
 - `GET /admin/dashboard`: Admin dashboard with stats (revenue, orders, customers, products).
 - `Resource /admin/products`: Full CRUD for products.
