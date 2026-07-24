@@ -35,14 +35,21 @@ class Order extends Model
     ];
 
     const STATUS_PENDING = 'pending';
+
     const STATUS_PROCESSING = 'processing';
+
     const STATUS_SHIPPED = 'shipped';
+
     const STATUS_DELIVERED = 'delivered';
+
     const STATUS_CANCELLED = 'cancelled';
 
     const PAYMENT_PENDING = 'pending';
+
     const PAYMENT_PAID = 'paid';
+
     const PAYMENT_FAILED = 'failed';
+
     const PAYMENT_EXPIRED = 'expired';
 
     public function user()
@@ -62,12 +69,12 @@ class Order extends Model
 
     public function getFormattedTotalAttribute(): string
     {
-        return 'Rp ' . number_format($this->total, 0, ',', '.');
+        return 'Rp '.number_format($this->total, 0, ',', '.');
     }
 
     public function getStatusBadgeAttribute(): string
     {
-        return match($this->status) {
+        return match ($this->status) {
             'pending' => 'warning',
             'processing' => 'info',
             'shipped' => 'primary',
@@ -79,7 +86,7 @@ class Order extends Model
 
     public function getPaymentBadgeAttribute(): string
     {
-        return match($this->payment_status) {
+        return match ($this->payment_status) {
             'paid' => 'success',
             'pending' => 'warning',
             'failed' => 'danger',

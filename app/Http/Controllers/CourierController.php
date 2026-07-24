@@ -11,10 +11,10 @@ class CourierController extends Controller
     public function index(Request $request)
     {
         $status = $request->query('status', 'shipped');
-        
+
         $orders = Order::with('user', 'items.product')
             ->where('courier_id', auth()->id())
-            ->when($status !== 'all', function($q) use ($status) {
+            ->when($status !== 'all', function ($q) use ($status) {
                 $q->where('status', $status);
             })
             ->latest()
@@ -29,6 +29,7 @@ class CourierController extends Controller
             abort(403);
         }
         $order->load(['items.product', 'user']);
+
         return view('courier.order-detail', compact('order'));
     }
 
@@ -51,15 +52,15 @@ class CourierController extends Controller
             if (str_contains($imageData, 'data:image')) {
                 $imageArray = explode(',', $imageData);
                 $decodedImage = base64_decode($imageArray[1]);
-                $fileName = 'proofs/' . uniqid() . '.jpg';
-                
+                $fileName = 'proofs/'.uniqid().'.jpg';
+
                 Storage::disk('public')->put($fileName, $decodedImage);
                 $path = $fileName;
             }
-        } 
-        
+        }
+
         // Priority 2: Standard file upload fallback
-        if (!$path && $request->hasFile('proof_of_delivery')) {
+        if (! $path && $request->hasFile('proof_of_delivery')) {
             $request->validate([
                 'proof_of_delivery' => 'required|image|mimes:jpeg,png,jpg|max:5120',
             ]);

@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\OrderItem;
+use Illuminate\Http\Request;
 
 class OrderItemRatingController extends Controller
 {
@@ -18,7 +18,7 @@ class OrderItemRatingController extends Controller
         $order = $item->order ?? null;
         $ownerId = $order->user_id ?? $order->customer_id ?? null;
 
-        if (!$order || $ownerId != auth()->id()) {
+        if (! $order || $ownerId != auth()->id()) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 

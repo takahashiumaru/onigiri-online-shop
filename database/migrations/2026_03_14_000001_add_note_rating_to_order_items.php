@@ -9,7 +9,7 @@ class AddNoteRatingToOrderItems extends Migration
     public function up()
     {
         // safe-guard: only add column if it doesn't already exist
-        if (!Schema::hasColumn('order_items', 'note_rating')) {
+        if (! Schema::hasColumn('order_items', 'note_rating')) {
             // decide position depending on existing columns to avoid "unknown column" errors
             if (Schema::hasColumn('order_items', 'rating_review')) {
                 Schema::table('order_items', function (Blueprint $table) {

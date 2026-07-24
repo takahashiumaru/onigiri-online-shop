@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
-use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
@@ -14,14 +14,14 @@ class ReportController extends Controller
         return [
             'total_orders' => $orders->count(),
             'total_revenue' => $orders->sum('total'),
-            'total_items' => $orders->sum(fn($o) => $o->items->sum('quantity')),
+            'total_items' => $orders->sum(fn ($o) => $o->items->sum('quantity')),
         ];
     }
 
     public function daily(Request $request)
     {
         $date = $request->date ? Carbon::parse($request->date) : Carbon::today();
-        
+
         $orders = Order::whereDate('created_at', $date)
             ->where('payment_status', 'paid')
             ->with('user', 'items.product')
@@ -36,7 +36,7 @@ class ReportController extends Controller
     {
         $month = (int) ($request->month ?: date('m'));
         $year = (int) ($request->year ?: date('Y'));
-        
+
         $orders = Order::whereMonth('created_at', $month)
             ->whereYear('created_at', $year)
             ->where('payment_status', 'paid')

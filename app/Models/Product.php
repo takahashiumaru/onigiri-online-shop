@@ -43,7 +43,7 @@ class Product extends Model
 
     public function getFormattedPriceAttribute(): string
     {
-        return 'Rp ' . number_format($this->price, 0, ',', '.');
+        return 'Rp '.number_format($this->price, 0, ',', '.');
     }
 
     public function getImageUrlAttribute(): string
@@ -51,6 +51,7 @@ class Product extends Model
         if ($this->image && \Storage::disk('public')->exists($this->image)) {
             return \Storage::url($this->image);
         }
+
         return asset('images/default-onigiri.jpg');
     }
 

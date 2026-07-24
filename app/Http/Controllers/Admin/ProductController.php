@@ -15,7 +15,7 @@ class ProductController extends Controller
         $query = Product::query();
 
         if ($request->search) {
-            $query->where('name', 'like', '%' . $request->search . '%');
+            $query->where('name', 'like', '%'.$request->search.'%');
         }
 
         if ($request->category) {
@@ -51,7 +51,7 @@ class ProductController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
-        $validated['slug'] = Str::slug($validated['name']) . '-' . Str::random(6);
+        $validated['slug'] = Str::slug($validated['name']).'-'.Str::random(6);
         $validated['is_available'] = $request->boolean('is_available', true);
 
         if ($request->hasFile('image')) {
@@ -135,7 +135,7 @@ class ProductController extends Controller
             return response()->json([
                 'success' => true,
                 'new_stock' => $freshStock,
-                'message' => $message
+                'message' => $message,
             ]);
         }
 

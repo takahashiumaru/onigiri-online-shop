@@ -17,16 +17,16 @@ class CartController extends Controller
             ->get();
 
         // Remove cart items whose product was deleted
-        $cartItems = $cartItems->filter(fn($item) => $item->product !== null);
+        $cartItems = $cartItems->filter(fn ($item) => $item->product !== null);
 
-        $total = $cartItems->sum(fn($item) => $item->quantity * $item->product->price);
+        $total = $cartItems->sum(fn ($item) => $item->quantity * $item->product->price);
 
         return view('customer.cart', compact('cartItems', 'total'));
     }
 
     public function add(Request $request, Product $product)
     {
-        if (!$product->isInStock()) {
+        if (! $product->isInStock()) {
             return back()->with('error', 'Produk tidak tersedia atau stok habis.');
         }
 
@@ -55,13 +55,13 @@ class CartController extends Controller
             }
 
             CartItem::create([
-                'user_id'    => Auth::id(),
+                'user_id' => Auth::id(),
                 'product_id' => $product->id,
-                'quantity'   => $quantity,
+                'quantity' => $quantity,
             ]);
         }
 
-        return back()->with('success', $product->name . ' ditambahkan ke keranjang!');
+        return back()->with('success', $product->name.' ditambahkan ke keranjang!');
     }
 
     public function update(Request $request, CartItem $cartItem)
@@ -91,12 +91,14 @@ class CartController extends Controller
         }
 
         $cartItem->delete();
+
         return back()->with('success', 'Item dihapus dari keranjang.');
     }
 
     public function clear()
     {
         CartItem::where('user_id', Auth::id())->delete();
+
         return back()->with('success', 'Keranjang dikosongkan.');
     }
 }

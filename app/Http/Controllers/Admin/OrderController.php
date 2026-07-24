@@ -21,8 +21,8 @@ class OrderController extends Controller
         }
 
         if ($request->search) {
-            $query->where('order_number', 'like', '%' . $request->search . '%')
-                  ->orWhereHas('user', fn($q) => $q->where('name', 'like', '%' . $request->search . '%'));
+            $query->where('order_number', 'like', '%'.$request->search.'%')
+                ->orWhereHas('user', fn ($q) => $q->where('name', 'like', '%'.$request->search.'%'));
         }
 
         $orders = $query->latest()->paginate(20);
@@ -35,9 +35,9 @@ class OrderController extends Controller
         $query = Order::with('user', 'items')->where('status', 'processing');
 
         if ($request->search) {
-            $query->where(function($q) use ($request) {
-                $q->where('order_number', 'like', '%' . $request->search . '%')
-                  ->orWhereHas('user', fn($sq) => $sq->where('name', 'like', '%' . $request->search . '%'));
+            $query->where(function ($q) use ($request) {
+                $q->where('order_number', 'like', '%'.$request->search.'%')
+                    ->orWhereHas('user', fn ($sq) => $sq->where('name', 'like', '%'.$request->search.'%'));
             });
         }
 
@@ -51,6 +51,7 @@ class OrderController extends Controller
     {
         $order->load(['user', 'items.product', 'courier']);
         $couriers = \App\Models\User::where('role', 'courier')->get();
+
         return view('admin.orders.show', compact('order', 'couriers'));
     }
 

@@ -18,7 +18,7 @@ class CourierMiddleware
         if (auth()->check() && auth()->user()->isCourier()) {
             return $next($request);
         }
-        
+
         return redirect()->route('home')->with('error', 'Akses ditolak. Anda bukan kurir.');
     }
 }

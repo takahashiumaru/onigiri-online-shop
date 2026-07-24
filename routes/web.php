@@ -1,22 +1,21 @@
 <?php
 
-use App\Http\Controllers\Api\ReportController as ApiReportController;
 use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ReportController;
-use App\Http\Controllers\Customer\HomeController;
-use App\Http\Controllers\Customer\CartController;
-use App\Http\Controllers\Customer\CheckoutController;
-use App\Http\Controllers\Customer\OrderController;
+use App\Http\Controllers\Api\ReportController as ApiReportController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\CourierController;
+use App\Http\Controllers\Customer\CartController;
+use App\Http\Controllers\Customer\CheckoutController;
+use App\Http\Controllers\Customer\HomeController;
+use App\Http\Controllers\Customer\OrderController;
+use App\Http\Controllers\OrderItemRatingController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\OrderItemRatingController;
-use App\Http\Controllers\CourierController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Controller;
 
 // API Routes
 Route::prefix('api')->group(function () {
@@ -105,9 +104,10 @@ Route::middleware('auth')->get('/notifications', function () {
 // Admin notifications page (protected + admin check)
 Route::middleware('auth')->get('/admin/notifications', function () {
     $user = auth()->user();
-    if (!$user || !method_exists($user, 'isAdmin') || !$user->isAdmin()) {
+    if (! $user || ! method_exists($user, 'isAdmin') || ! $user->isAdmin()) {
         abort(403);
     }
+
     return view('admin.notifications.index');
 })->name('admin.notifications');
 

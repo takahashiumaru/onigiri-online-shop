@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Models\OrderItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
-use App\Models\OrderItem;
 
 class HomeController extends Controller
 {
@@ -48,7 +48,7 @@ class HomeController extends Controller
         }
 
         if ($request->search) {
-            $query->where('name', 'like', '%' . $request->search . '%');
+            $query->where('name', 'like', '%'.$request->search.'%');
         }
 
         $products = $query->orderBy('name')->paginate(12);

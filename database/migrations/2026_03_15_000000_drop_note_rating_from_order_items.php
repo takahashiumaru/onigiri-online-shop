@@ -18,7 +18,7 @@ class DropNoteRatingFromOrderItems extends Migration
     public function down()
     {
         // restore column if needed (safe: add without position if dependent columns missing)
-        if (!Schema::hasColumn('order_items', 'note_rating')) {
+        if (! Schema::hasColumn('order_items', 'note_rating')) {
             if (Schema::hasColumn('order_items', 'rating_review')) {
                 Schema::table('order_items', function (Blueprint $table) {
                     $table->string('note_rating')->nullable()->after('rating_review');

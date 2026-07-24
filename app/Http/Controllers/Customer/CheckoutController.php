@@ -264,16 +264,18 @@ class CheckoutController extends Controller
     private function syncStatusWithMidtrans(Order $order): void
     {
         $serverKey = config('midtrans.server_key');
-        if (empty($serverKey)) return;
+        if (empty($serverKey)) {
+            return;
+        }
 
-        $baseUrl = config('midtrans.is_production') 
-            ? 'https://api.midtrans.com/v2/' 
+        $baseUrl = config('midtrans.is_production')
+            ? 'https://api.midtrans.com/v2/'
             : 'https://api.sandbox.midtrans.com/v2/';
-        
+
         try {
             $response = Http::withBasicAuth($serverKey, '')
                 ->timeout(5)
-                ->get($baseUrl . $order->order_number . '/status');
+                ->get($baseUrl.$order->order_number.'/status');
 
             if ($response->successful()) {
                 $data = $response->json();
@@ -282,7 +284,7 @@ class CheckoutController extends Controller
                 if (in_array($txStatus, ['capture', 'settlement', 'success'])) {
                     $order->update([
                         'payment_status' => 'paid',
-                        'status' => 'processing'
+                        'status' => 'processing',
                     ]);
                 } elseif (in_array($txStatus, ['deny', 'cancel', 'expire', 'expired'])) {
                     // Restore stock if not already cancelled
@@ -292,12 +294,12 @@ class CheckoutController extends Controller
 
                     $order->update([
                         'payment_status' => ($txStatus === 'expire' || $txStatus === 'expired') ? 'expired' : 'failed',
-                        'status' => 'cancelled'
+                        'status' => 'cancelled',
                     ]);
                 }
             }
         } catch (\Exception $e) {
-            Log::warning("Failed to sync Midtrans status for {$order->order_number}: " . $e->getMessage());
+            Log::warning("Failed to sync Midtrans status for {$order->order_number}: ".$e->getMessage());
         }
     }
 

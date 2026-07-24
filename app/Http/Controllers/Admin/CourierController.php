@@ -14,6 +14,7 @@ class CourierController extends Controller
     public function index()
     {
         $couriers = User::where('role', 'courier')->latest()->paginate(10);
+
         return view('admin.couriers.index', compact('couriers'));
     }
 
@@ -60,7 +61,7 @@ class CourierController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $courier->id,
+            'email' => 'required|string|email|max:255|unique:users,email,'.$courier->id,
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string|max:1000',
             'password' => 'nullable|string|min:8|confirmed',
@@ -95,6 +96,7 @@ class CourierController extends Controller
     {
         // Nullify courier_id in orders before testing if they can be deleted
         $courier->delete();
+
         return redirect()->route('admin.couriers.index')->with('success', 'Kurir berhasil dihapus.');
     }
 }

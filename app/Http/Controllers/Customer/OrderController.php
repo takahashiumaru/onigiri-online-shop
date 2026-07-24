@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
@@ -15,7 +15,7 @@ class OrderController extends Controller
 
         // queries for counts (unfiltered by tab)
         $countQuery = Order::where('user_id', $user->id);
-        
+
         // date range filter should apply to counts too if provided
         if ($request->filled('from')) {
             $countQuery->whereDate('created_at', '>=', $request->input('from'));
@@ -90,7 +90,7 @@ class OrderController extends Controller
             return redirect()->back()->with('error', 'Pesanan tidak dapat dibatalkan pada status saat ini.');
         }
 
-        \DB::transaction(function() use ($order) {
+        \DB::transaction(function () use ($order) {
             // Kembalikan stok untuk setiap item di pesanan ini
             foreach ($order->items as $item) {
                 if ($item->product) {
