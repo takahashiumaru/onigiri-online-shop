@@ -19,4 +19,17 @@ abstract class Controller
             'totalPages' => $paginated->lastPage(),
         ]);
     }
+
+    protected static function reportResponse($paginated, $from, $to)
+    {
+        return response()->json([
+            'from' => $from->toIso8601String(),
+            'to' => $to->toIso8601String(),
+            'data' => $paginated->items(),
+            'total' => $paginated->total(),
+            'page' => $paginated->currentPage(),
+            'pageSize' => $paginated->perPage(),
+            'totalPages' => $paginated->lastPage(),
+        ]);
+    }
 }
