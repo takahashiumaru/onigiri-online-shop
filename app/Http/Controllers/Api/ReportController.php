@@ -28,11 +28,12 @@ class ReportController extends Controller
     public function daily(Request $request)
     {
         $request->validate(['date' => 'nullable|date']);
-        $date = $request->date ? Carbon::parse($request->date) : Carbon::today();
 
-        $orders = $this->getPaginatedOrders($date->copy()->startOfDay(), $date->copy()->endOfDay());
+        $from = Carbon::parse($request->date ?? 'today')->startOfDay();
+        $to = $from->copy()->endOfDay();
+        $orders = $this->getPaginatedOrders($from, $to);
 
-        return $this->paginatedResponse($orders);
+        return $this->reportResponse($orders, $from, $to);
     }
 
     /**
@@ -51,8 +52,10 @@ class ReportController extends Controller
             1
         );
 
-        $orders = $this->getPaginatedOrders($date->copy()->startOfMonth(), $date->copy()->endOfMonth());
+        $from = $date->copy()->startOfMonth();
+        $to = $date->copy()->endOfMonth();
+        $orders = $this->getPaginatedOrders($from, $to);
 
-        return $this->paginatedResponse($orders);
+        return $this->reportResponse($orders, $from, $to);
     }
 }
