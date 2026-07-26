@@ -1,3 +1,4 @@
 .env
 .DS_Store
 storage/app/public/proofs/*.DS_Store
+storage/app/public/proofs/*.jpg
