@@ -9,12 +9,6 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::get('/version', function () {
-    return response()->json([
-        'version' => Controller::getVersion(),
-    ]);
-});
-
 Route::get('/health', function () {
     $dbStatus = 'disconnected';
     $dbLatency = null;
