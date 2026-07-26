@@ -23,8 +23,7 @@ An online shop application built with Laravel 12, Vite, and Tailwind CSS.
 
 ## API Endpoints
 ### Public
-- `GET /api/version`: Returns the application version (dynamically read from `composer.json`).
-- `GET /api/health`: Returns API status, database connection status, and app version.
+- `GET /api/health`: Returns API status, database connection status, and app version (dynamically read from `composer.json`).
 - `GET /api/reports/daily`: Get daily paginated paid orders report (optional parameter `date`).
 - `GET /api/reports/monthly`: Get monthly paginated paid orders report (optional parameters `month` and `year`).
 
