@@ -17,12 +17,6 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-// API Routes
-Route::prefix('api')->group(function () {
-    Route::get('/reports/daily', [ApiReportController::class, 'daily']);
-    Route::get('/reports/monthly', [ApiReportController::class, 'monthly']);
-});
-
 // =====================
 // AUTH ROUTES
 // =====================
