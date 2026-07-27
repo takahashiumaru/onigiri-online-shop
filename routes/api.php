@@ -10,9 +10,11 @@ use Illuminate\Support\Facades\Route;
 | API Routes
 |--------------------------------------------------------------------------
 |
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group.
+| Available endpoints:
+| - GET /api/health: API status, DB connectivity, and app version.
+| - GET /api/routes: List all registered API routes (debug only).
+| - GET /api/reports/daily: Paginated daily sales report.
+| - GET /api/reports/monthly: Paginated monthly sales report.
 |
 */
 
