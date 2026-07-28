@@ -26,6 +26,7 @@ class HealthController extends Controller
 
         return response()->json([
             'status' => 'ok',
+            'app_name' => config('app.name'),
             'database' => [
                 'status' => $dbStatus,
                 'latency_ms' => $dbLatency,
