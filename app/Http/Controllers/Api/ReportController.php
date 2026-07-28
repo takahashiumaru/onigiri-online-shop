@@ -33,7 +33,7 @@ class ReportController extends Controller
         $to = $from->copy()->endOfDay();
         $orders = $this->getPaginatedOrders($from, $to);
 
-        return $this->reportResponse($orders, $from, $to);
+        return self::reportResponse($orders, $from, $to);
     }
 
     /**
@@ -56,6 +56,6 @@ class ReportController extends Controller
         $to = $date->copy()->endOfMonth();
         $orders = $this->getPaginatedOrders($from, $to);
 
-        return $this->reportResponse($orders, $from, $to);
+        return self::reportResponse($orders, $from, $to);
     }
 }

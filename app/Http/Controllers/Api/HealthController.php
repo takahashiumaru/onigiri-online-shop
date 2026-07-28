@@ -30,7 +30,7 @@ class HealthController extends Controller
                 'status' => $dbStatus,
                 'latency_ms' => $dbLatency,
             ],
-            'version' => $this->getVersion(),
+            'version' => self::getVersion(),
             'timestamp' => now()->toIso8601String(),
             'app_env' => config('app.env'),
             'app_debug' => config('app.debug'),
