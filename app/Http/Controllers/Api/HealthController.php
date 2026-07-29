@@ -10,31 +10,34 @@ class HealthController extends Controller
 {
     public function index()
     {
-        $dbStatus = 'disconnected';
-        $dbLatency = null;
-
-        try {
-            $startTime = microtime(true);
-            DB::connection()->getPdo();
-            DB::select('SELECT 1');
-            $dbLatency = round((microtime(true) - $startTime) * 1000, 2);
-            $dbStatus = 'connected';
-        } catch (\Exception $e) {
-            $dbStatus = 'disconnected';
-        }
+        $db = $this->checkDatabase();
 
         return response()->json([
             'status' => 'ok',
             'app_name' => config('app.name'),
             'database' => [
-                'status' => $dbStatus,
-                'latency_ms' => $dbLatency,
+                'status' => $db['status'],
+                'latency_ms' => $db['latency'],
             ],
-            'version' => self::getVersion(),
+            'version' => static::getVersion(),
             'timestamp' => now()->toIso8601String(),
             'app_env' => config('app.env'),
             'app_debug' => config('app.debug'),
         ]);
+    }
+
+    private function checkDatabase(): array
+    {
+        try {
+            $startTime = microtime(true);
+            DB::connection()->getPdo();
+            DB::select('SELECT 1');
+            $latency = round((microtime(true) - $startTime) * 1000, 2);
+
+            return ['status' => 'connected', 'latency' => $latency];
+        } catch (\Exception $e) {
+            return ['status' => 'disconnected', 'latency' => null];
+        }
     }
 
     public function routes()
