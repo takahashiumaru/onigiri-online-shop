@@ -6,6 +6,11 @@
 /vendor
 storage/app/public/proofs/*.DS_Store
 storage/app/public/proofs/*.jpg
+.env.local
+.env.testing
+/storage/*.key
+/storage/framework/cache/data/*
+/database/*.sqlite
 .DS_Store
 npm-debug.log*
 yarn-debug.log*
