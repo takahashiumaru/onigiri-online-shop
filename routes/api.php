@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\HealthController;
+use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -20,6 +21,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/health', [HealthController::class, 'index']);
 Route::get('/routes', [HealthController::class, 'routes']);
+
+Route::get('/products', [ProductController::class, 'index']);
+Route::get('/products/{id}', [ProductController::class, 'show']);
 
 Route::get('/reports/daily', [ReportController::class, 'daily']);
 Route::get('/reports/monthly', [ReportController::class, 'monthly']);
