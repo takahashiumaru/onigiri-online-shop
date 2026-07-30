@@ -17,7 +17,9 @@ A Laravel-based online shop for onigiri, featuring product management, cart, che
 6. `npm run build`
 
 ## API Endpoints
-- `GET /api/health`: System health status (database connectivity + latency + version).
+- `GET /api/health`: System health status (database connectivity + latency + version + OS/memory).
 - `GET /api/routes`: List of all registered API routes (debug).
+- `GET /api/products`: Paginated list of products.
+- `GET /api/products/{id}`: Detailed information of a product.
 - `GET /api/reports/daily`: Paginated daily sales report.
 - `GET /api/reports/monthly`: Paginated monthly sales report.
