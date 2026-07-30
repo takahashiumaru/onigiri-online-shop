@@ -15,6 +15,12 @@ class HealthController extends Controller
         return response()->json([
             'status' => 'ok',
             'app_name' => config('app.name'),
+            'system' => [
+                'os' => PHP_OS,
+                'php_version' => PHP_VERSION,
+                'server_info' => php_uname('s') . ' ' . php_uname('r'),
+                'memory_usage' => $this->formatBytes(memory_get_usage(true)),
+            ],
             'database' => [
                 'status' => $db['status'],
                 'latency_ms' => $db['latency'],
@@ -24,6 +30,17 @@ class HealthController extends Controller
             'app_env' => config('app.env'),
             'app_debug' => config('app.debug'),
         ]);
+    }
+
+    private function formatBytes($bytes, $precision = 2): string
+    {
+        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+        $bytes = max($bytes, 0);
+        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+        $pow = min($pow, count($units) - 1);
+        $bytes /= (1 << (10 * $pow));
+
+        return round($bytes, $precision) . ' ' . $units[$pow];
     }
 
     private function checkDatabase(): array
