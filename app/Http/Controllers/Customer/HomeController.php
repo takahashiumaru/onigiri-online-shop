@@ -20,17 +20,7 @@ class HomeController extends Controller
         // hitung statistik ulasan untuk produk yang tampil (hanya dari order 'delivered')
         $productStats = [];
         foreach ($products as $p) {
-            $q = OrderItem::where('product_id', $p->id)
-                ->whereNotNull('rating')
-                ->whereHas('order', function ($q2) {
-                    $q2->where('status', 'delivered');
-                });
-            $avg = $q->avg('rating');
-            $count = $q->count();
-            $productStats[$p->id] = [
-                'avg' => $avg ? round($avg, 1) : null,
-                'count' => $count,
-            ];
+            $productStats[$p->id] = self::getProductRatingStats($p->id);
         }
 
         return view('customer.home', compact('products', 'productStats'));
@@ -61,17 +51,7 @@ class HomeController extends Controller
             ? $products->getCollection()
             : collect($products);
         foreach ($pageCollection as $p) {
-            $q = OrderItem::where('product_id', $p->id)
-                ->whereNotNull('rating')
-                ->whereHas('order', function ($q2) {
-                    $q2->where('status', 'delivered');
-                });
-            $avg = $q->avg('rating');
-            $count = $q->count();
-            $productStats[$p->id] = [
-                'avg' => $avg ? round($avg, 1) : null,
-                'count' => $count,
-            ];
+            $productStats[$p->id] = self::getProductRatingStats($p->id);
         }
 
         return view('customer.products', compact('products', 'categories', 'productStats'));

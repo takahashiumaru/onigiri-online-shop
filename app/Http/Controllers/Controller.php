@@ -32,4 +32,21 @@ abstract class Controller
             'totalPages' => $paginated->lastPage(),
         ]);
     }
+
+    protected static function getProductRatingStats($productId)
+    {
+        $q = \App\Models\OrderItem::where('product_id', $productId)
+            ->whereNotNull('rating')
+            ->whereHas('order', function ($q2) {
+                $q2->where('status', 'delivered');
+            });
+
+        $avg = $q->avg('rating');
+        $count = $q->count();
+
+        return [
+            'avg' => $avg ? round($avg, 1) : null,
+            'count' => $count,
+        ];
+    }
 }
