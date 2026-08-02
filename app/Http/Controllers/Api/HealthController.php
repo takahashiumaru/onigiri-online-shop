@@ -13,22 +13,18 @@ class HealthController extends Controller
         $db = $this->checkDatabase();
 
         return response()->json([
-            'status' => 'ok',
-            'app_name' => config('app.name'),
+            'status' => $db['status'] === 'connected' ? 'ok' : 'degraded',
+            'version' => static::getVersion(),
+            'timestamp' => now()->toIso8601String(),
             'system' => [
                 'os' => PHP_OS,
                 'php_version' => PHP_VERSION,
-                'server_info' => php_uname('s') . ' ' . php_uname('r'),
                 'memory_usage' => $this->formatBytes(memory_get_usage(true)),
             ],
             'database' => [
                 'status' => $db['status'],
                 'latency_ms' => $db['latency'],
             ],
-            'version' => static::getVersion(),
-            'timestamp' => now()->toIso8601String(),
-            'app_env' => config('app.env'),
-            'app_debug' => config('app.debug'),
         ]);
     }
 
@@ -40,7 +36,7 @@ class HealthController extends Controller
         $pow = min($pow, count($units) - 1);
         $bytes /= (1 << (10 * $pow));
 
-        return round($bytes, $precision) . ' ' . $units[$pow];
+        return round($bytes, $precision).' '.$units[$pow];
     }
 
     private function checkDatabase(): array
