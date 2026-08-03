@@ -12,8 +12,11 @@ class HealthController extends Controller
     {
         $db = $this->checkDatabase();
 
+        $dbStatus = $db['status'];
+        $httpStatus = $dbStatus === 'connected' ? 200 : 503;
+
         return response()->json([
-            'status' => $db['status'] === 'connected' ? 'ok' : 'degraded',
+            'status' => $dbStatus === 'connected' ? 'ok' : 'degraded',
             'version' => static::getVersion(),
             'timestamp' => now()->toIso8601String(),
             'system' => [
@@ -22,10 +25,10 @@ class HealthController extends Controller
                 'memory_usage' => $this->formatBytes(memory_get_usage(true)),
             ],
             'database' => [
-                'status' => $db['status'],
+                'status' => $dbStatus,
                 'latency_ms' => $db['latency'],
             ],
-        ]);
+        ], $httpStatus);
     }
 
     private function formatBytes($bytes, $precision = 2): string
