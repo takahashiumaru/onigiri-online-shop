@@ -1,26 +1,82 @@
 # Onigiri Online Shop
 
-A Laravel-based online shop for onigiri, featuring product management, cart, checkout, and courier dashboard.
+A Laravel-based online shop for onigiri, featuring product management, cart,
+checkout, courier dashboard, and admin reports.
+
+## Features
+- **Customer**: Browse products, manage cart, checkout, pay via Midtrans, rate
+  delivered orders.
+- **Admin**: Manage products, couriers, orders, and view daily/monthly reports.
+- **Courier**: View ready-for-delivery orders, update delivery status.
+- **Notifications**: In-app notifications for orders/payments/ratings.
+- **Observability**: JSON API with health, route listing, and report endpoints.
 
 ## Tech Stack
-- Framework: Laravel 12.x
-- Language: PHP 8.3
-- Database: SQLite (default)
-- Frontend: Vite + Tailwind CSS
+- **Framework**: Laravel 12.x
+- **Language**: PHP 8.3
+- **Database**: SQLite (default; MySQL/Postgres supported via `.env`)
+- **Frontend**: Vite + Tailwind CSS
+- **Payment**: Midtrans Snap
 
 ## Setup
-1. `composer install`
-2. `cp .env.example .env`
-3. `php artisan key:generate`
-4. `php artisan migrate --force`
-5. `npm install`
-6. `npm run build`
+1. Install PHP dependencies:
+   ```bash
+   composer install
+   ```
+2. Copy environment template and generate app key:
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+3. Run database migrations:
+   ```bash
+   php artisan migrate --force
+   ```
+4. (Optional) Seed sample data:
+   ```bash
+   php artisan db:seed
+   ```
+5. Install Node dependencies and build frontend assets:
+   ```bash
+   npm install
+   npm run build
+   ```
+
+## Local Development
+- Run the dev server (HTTP + Vite hot reload):
+  ```bash
+  php artisan serve
+  npm run dev
+  ```
+- Visit `http://127.0.0.1:8000`.
 
 ## API Endpoints
-- `GET /api/health`: System health status (database connectivity + latency + version + OS/memory). Returns `200 OK` or `503 Service Unavailable` if database is down.
-- `GET /api/routes`: List of all registered API routes (debug).
-- `GET /api/products`: Paginated list of products.
-- `GET /api/products?include=ratings`: Paginated list of products with rating statistics.
-- `GET /api/products/{id}`: Detailed information of a product.
-- `GET /api/reports/daily`: Paginated daily sales report.
-- `GET /api/reports/monthly`: Paginated monthly sales report.
+
+| Method | Endpoint                  | Description                                                      |
+|--------|---------------------------|------------------------------------------------------------------|
+| GET    | `/api/health`             | Health check (DB connectivity + latency + version + OS/memory).  |
+| GET    | `/api/routes`             | List all registered API routes (debug only).                     |
+| GET    | `/api/products`           | Paginated list of products.                                      |
+| GET    | `/api/products?include=ratings` | Paginated list with rating stats.                          |
+| GET    | `/api/products/{id}`      | Detailed information for a single product.                       |
+| GET    | `/api/reports/daily`      | Paginated daily sales report (optional `?date=YYYY-MM-DD`).      |
+| GET    | `/api/reports/monthly`    | Paginated monthly sales report (optional `?month=1&year=2025`).  |
+| GET    | `/api/user`               | Current authenticated user (Sanctum-protected).                  |
+
+### Health Check Response
+```json
+{
+  "status": "ok",
+  "version": "1.0.0",
+  "timestamp": "2025-01-01T00:00:00+00:00",
+  "system": { "os": "Linux", "php_version": "8.3.0", "memory_usage": "32 MB" },
+  "database": { "status": "connected", "latency_ms": 1.23 }
+}
+```
+Returns `200 OK` when healthy, `503 Service Unavailable` when the database is
+disconnected.
+
+## Tests
+```bash
+php artisan test
+```
