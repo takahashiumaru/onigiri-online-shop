@@ -9,6 +9,11 @@ abstract class Controller
         return json_decode(file_get_contents(base_path('composer.json')), true)['version'] ?? '1.0.0';
     }
 
+    protected static function errorResponse(string $message, int $status = 400)
+    {
+        return response()->json(['error' => $message], $status);
+    }
+
     protected static function paginatedResponse($paginated)
     {
         return response()->json([
