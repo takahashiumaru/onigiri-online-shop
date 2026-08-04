@@ -27,6 +27,10 @@ class ProductController extends Controller
 
     public function show($id)
     {
-        return response()->json(Product::findOrFail($id));
+        try {
+            return response()->json(Product::findOrFail($id));
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return self::errorResponse('Produk tidak ditemukan.', 404);
+        }
     }
 }
