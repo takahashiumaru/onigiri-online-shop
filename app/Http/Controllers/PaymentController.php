@@ -76,14 +76,14 @@ class PaymentController extends Controller
         if (! $order) {
             Log::warning('Payment confirm: order not found', ['order_id' => $orderId, 'order_number' => $orderNumber]);
 
-            return response()->json(['error' => 'Order tidak ditemukan.'], 404);
+            return self::errorResponse('Order tidak ditemukan.', 404);
         }
 
         // Jika route dilindungi auth, user akan tersedia; lakukan verifikasi kepemilikan bila ada
         if ($request->user() && $order->user_id !== $request->user()->id) {
             Log::warning('Payment confirm: unauthorized user', ['order_id' => $order->id, 'user_id' => $request->user()->id]);
 
-            return response()->json(['error' => 'Akses ditolak.'], 403);
+            return self::errorResponse('Akses ditolak.', 403);
         }
 
         // Hanya update jika belum paid
