@@ -20,3 +20,4 @@ yarn-error.log*
 /.phpunit.result.cache
 /.phpunit.cache
 /.pest_tracker
+/vendor/pestphp/pest/.temp/
