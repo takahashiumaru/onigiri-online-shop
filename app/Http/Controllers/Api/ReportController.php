@@ -31,7 +31,8 @@ class ReportController extends Controller
 
         $from = Carbon::parse($request->date ?? 'today')->startOfDay();
         $to = $from->copy()->endOfDay();
-        $orders = $this->getPaginatedOrders($from, $to);
+        $perPage = (int) ($request->query('perPage') ?? 15);
+        $orders = $this->getPaginatedOrders($from, $to, $perPage);
 
         return self::reportResponse($orders, $from, $to);
     }
@@ -54,7 +55,8 @@ class ReportController extends Controller
 
         $from = $date->copy()->startOfMonth();
         $to = $date->copy()->endOfMonth();
-        $orders = $this->getPaginatedOrders($from, $to);
+        $perPage = (int) ($request->query('perPage') ?? 15);
+        $orders = $this->getPaginatedOrders($from, $to, $perPage);
 
         return self::reportResponse($orders, $from, $to);
     }
