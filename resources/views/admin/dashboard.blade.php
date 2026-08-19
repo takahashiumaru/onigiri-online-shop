@@ -119,7 +119,7 @@
                     <span style="font-size: 1.8rem;">🍙</span>
                     <div class="flex-grow-1">
                         <div class="fw-semibold small">{{ $product->name }}</div>
-                        <small class="text-muted">{{ $product->order_items_count }} terjual</small>
+                        <small class="text-muted">{{ $product->sales_count }} terjual</small>
                     </div>
                     <span class="badge {{ $product->stock > 0 ? 'bg-success' : 'bg-danger' }}">
                         Stok: {{ $product->stock }}
@@ -138,7 +138,7 @@
                     <i class="bi bi-plus-circle me-2"></i>Tambah Produk
                 </a>
                 <a href="{{ route('admin.orders.ready') }}" class="btn btn-outline-primary shadow-none">
-                    <i class="bi bi-bicycle me-2"></i>Butuh Kurir ({{ $stats['need_courier'] }})
+                    <i class="bi bi-bicycle me-2"></i>Butuh Kurir ({{ $stats['needs_processing'] }})
                 </a>
                 <a href="{{ route('admin.products.index', ['stock' => 'low']) }}" class="btn btn-outline-danger shadow-none">
                     <i class="bi bi-exclamation-triangle me-2"></i>Stok Menipis ({{ $stats['low_stock'] }})
