@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\HealthController;
+use App\Http\Controllers\Api\PasswordController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ReportController;
 use Illuminate\Http\Request;
@@ -28,6 +29,9 @@ Route::get('/products/{id}', [ProductController::class, 'show']);
 Route::get('/reports/daily', [ReportController::class, 'daily']);
 Route::get('/reports/monthly', [ReportController::class, 'monthly']);
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+    Route::post('/user/password', [PasswordController::class, 'update']);
 });
