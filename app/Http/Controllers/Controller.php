@@ -42,8 +42,8 @@ abstract class Controller
     {
         $q = \App\Models\OrderItem::where('product_id', $productId)
             ->whereNotNull('rating')
-            ->whereHas('order', function ($q2) {
-                $q2->where('status', 'delivered');
+            ->whereHas('order', function ($query) {
+                $query->where('status', 'delivered');
             });
 
         $avg = $q->avg('rating');
