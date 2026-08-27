@@ -56,12 +56,12 @@ checkout, courier dashboard, and admin reports.
 |--------|---------------------------|------------------------------------------------------------------|
 | GET    | `/api/health`             | Health check (DB connectivity + latency + version + OS/memory).  |
 | GET    | `/api/routes`             | List all registered API routes (debug only).                     |
-| GET    | `/api/products`           | Paginated list of products.                                      |
-| GET    | `/api/products?include=ratings` | Paginated list with rating stats.                          |
+| GET    | `/api/products`           | Paginated list of products (optional `?include=ratings`). |
 | GET    | `/api/products/{id}`      | Detailed information for a single product.                       |
 | GET    | `/api/reports/daily`      | Paginated daily sales report (optional `?date=YYYY-MM-DD`, `?perPage=15`). |
 | GET    | `/api/reports/monthly`    | Paginated monthly sales report (optional `?month=1&year=2025`, `?perPage=15`). |
 | GET    | `/api/user`               | Current authenticated user (Sanctum-protected).                  |
+| POST   | `/api/user/password`      | Change user password (Sanctum-protected).                        |
 
 ### Health Check Response
 ```json
