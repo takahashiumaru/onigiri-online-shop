@@ -10,7 +10,20 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $products = Product::paginate(10);
+        $perPage = (int) ($request->query('perPage') ?? 10);
+        $perPage = ($perPage > 0 && $perPage <= 100) ? $perPage : 10;
+
+        $query = Product::query();
+
+        if ($request->filled('category')) {
+            $query->where('category', $request->query('category'));
+        }
+
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->query('search') . '%');
+        }
+
+        $products = $query->paginate($perPage);
 
         if ($request->query('include') === 'ratings') {
             $products->getCollection()->transform(function ($product) {
@@ -25,10 +38,18 @@ class ProductController extends Controller
         return static::paginatedResponse($products);
     }
 
-    public function show($id)
+    public function show(Request $request, $id)
     {
         try {
-            return response()->json(Product::findOrFail($id));
+            $product = Product::findOrFail($id);
+
+            if ($request->query('include') === 'ratings') {
+                $stats = self::getProductRatingStats($product->id);
+                $product->rating_avg = $stats['avg'];
+                $product->rating_count = $stats['count'];
+            }
+
+            return response()->json($product);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return self::errorResponse('Produk tidak ditemukan.', 404);
         }
