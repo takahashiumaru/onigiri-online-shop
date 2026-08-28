@@ -14,7 +14,7 @@ abstract class Controller
         return response()->json(['error' => $message], $status);
     }
 
-    protected static function paginatedResponse($paginated)
+    protected static function paginatedResponse(\Illuminate\Pagination\LengthAwarePaginator $paginated): \Illuminate\Http\JsonResponse
     {
         return response()->json([
             'data' => $paginated->items(),
@@ -25,7 +25,10 @@ abstract class Controller
         ]);
     }
 
-    protected static function reportResponse($paginated, $from, $to)
+    /**
+     * Generate standardized report response.
+     */
+    protected static function reportResponse(\Illuminate\Pagination\LengthAwarePaginator $paginated, \Carbon\Carbon $from, \Carbon\Carbon $to): \Illuminate\Http\JsonResponse
     {
         return response()->json([
             'from' => $from->toIso8601String(),
@@ -38,7 +41,10 @@ abstract class Controller
         ]);
     }
 
-    protected static function getProductRatingStats($productId)
+    /**
+     * Get aggregated rating stats for a product.
+     */
+    protected static function getProductRatingStats(int $productId): array
     {
         $q = \App\Models\OrderItem::where('product_id', $productId)
             ->whereNotNull('rating')
@@ -50,7 +56,7 @@ abstract class Controller
         $count = $q->count();
 
         return [
-            'avg' => $avg ? round($avg, 1) : null,
+            'avg' => $avg ? (float) round($avg, 1) : null,
             'count' => $count,
         ];
     }
