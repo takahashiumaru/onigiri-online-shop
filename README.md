@@ -54,7 +54,7 @@ checkout, courier dashboard, and admin reports.
 
 | Method | Endpoint                  | Description                                                      |
 |--------|---------------------------|------------------------------------------------------------------|
-| GET    | `/api/health`             | Health check (DB connectivity + latency + version + OS/memory).  |
+| GET    | `/api/health`             | Health check (DB connectivity + latency + version + OS/memory + storage).  |
 | GET    | `/api/routes`             | List all registered API routes (debug only).                     |
 | GET    | `/api/products`           | Paginated list of products (optional `?search=`, `?category=`, `?perPage=10`, `?include=ratings`). |
 | GET    | `/api/products/{id}`      | Detailed information for a single product (optional `?include=ratings`). |
@@ -70,7 +70,8 @@ checkout, courier dashboard, and admin reports.
   "version": "1.0.0",
   "timestamp": "2025-01-01T00:00:00+00:00",
   "system": { "os": "Linux", "php_version": "8.3.0", "memory_usage": "32 MB" },
-  "database": { "status": "connected", "latency_ms": 1.23 }
+  "database": { "status": "connected", "latency_ms": 1.23 },
+  "storage": { "status": "writable" }
 }
 ```
 Returns `200 OK` when healthy, `503 Service Unavailable` when the database is
