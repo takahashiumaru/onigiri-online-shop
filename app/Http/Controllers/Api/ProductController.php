@@ -23,17 +23,11 @@ class ProductController extends Controller
             $query->where('name', 'like', '%' . $request->query('search') . '%');
         }
 
-        $products = $query->paginate($perPage);
-
         if ($request->query('include') === 'ratings') {
-            $products->getCollection()->transform(function ($product) {
-                $stats = self::getProductRatingStats($product->id);
-                $product->rating_avg = $stats['avg'];
-                $product->rating_count = $stats['count'];
-
-                return $product;
-            });
+            $query->withRatings();
         }
+
+        $products = $query->paginate($perPage);
 
         return static::paginatedResponse($products);
     }
