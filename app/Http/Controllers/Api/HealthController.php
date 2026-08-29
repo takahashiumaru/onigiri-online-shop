@@ -11,12 +11,13 @@ class HealthController extends Controller
     public function index()
     {
         $db = $this->checkDatabase();
+        $storage = $this->checkStorage();
 
-        $dbStatus = $db['status'];
-        $httpStatus = $dbStatus === 'connected' ? 200 : 503;
+        $isOk = $db['status'] === 'connected' && $storage['status'] === 'writable';
+        $httpStatus = $isOk ? 200 : 503;
 
         return response()->json([
-            'status' => $dbStatus === 'connected' ? 'ok' : 'degraded',
+            'status' => $isOk ? 'ok' : 'degraded',
             'version' => static::getVersion(),
             'timestamp' => now()->toIso8601String(),
             'system' => [
@@ -25,10 +26,23 @@ class HealthController extends Controller
                 'memory_usage' => $this->formatBytes(memory_get_usage(true)),
             ],
             'database' => [
-                'status' => $dbStatus,
+                'status' => $db['status'],
                 'latency_ms' => $db['latency'],
             ],
+            'storage' => [
+                'status' => $storage['status'],
+            ],
         ], $httpStatus);
+    }
+
+    private function checkStorage(): array
+    {
+        try {
+            $isWritable = is_writable(storage_path('framework/cache'));
+            return ['status' => $isWritable ? 'writable' : 'readonly'];
+        } catch (\Exception $e) {
+            return ['status' => 'error'];
+        }
     }
 
     private function formatBytes($bytes, $precision = 2): string
