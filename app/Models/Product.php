@@ -55,8 +55,10 @@ class Product extends Model
         return asset('images/default-onigiri.jpg');
     }
 
-    public function isInStock(): bool
+    public function scopeWithRatings($query)
     {
-        return $this->stock > 0 && $this->is_available;
+        return $query->withAvg('orderItems as rating_avg', 'rating')
+                     ->withCount(['orderItems as rating_count' => function ($q) {
+                         $q->whereNotNull('rating');
+                     }]);
     }
-}
