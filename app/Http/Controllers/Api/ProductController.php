@@ -20,7 +20,7 @@ class ProductController extends Controller
         }
 
         if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->query('search') . '%');
+            $query->where('name', 'like', '%'.$request->query('search').'%');
         }
 
         if ($request->query('include') === 'ratings') {

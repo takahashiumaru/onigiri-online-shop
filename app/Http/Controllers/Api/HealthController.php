@@ -39,6 +39,7 @@ class HealthController extends Controller
     {
         try {
             $isWritable = is_writable(storage_path('framework/cache'));
+
             return ['status' => $isWritable ? 'writable' : 'readonly'];
         } catch (\Exception $e) {
             return ['status' => 'error'];
