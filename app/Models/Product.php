@@ -58,7 +58,8 @@ class Product extends Model
     public function scopeWithRatings($query)
     {
         return $query->withAvg('orderItems as rating_avg', 'rating')
-                     ->withCount(['orderItems as rating_count' => function ($q) {
-                         $q->whereNotNull('rating');
-                     }]);
+            ->withCount(['orderItems as rating_count' => function ($q) {
+                $q->whereNotNull('rating');
+            }]);
     }
+}
