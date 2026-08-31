@@ -46,14 +46,15 @@ abstract class Controller
      */
     protected static function getProductRatingStats(int $productId): array
     {
-        $q = \App\Models\OrderItem::where('product_id', $productId)
+        $avg = \App\Models\OrderItem::where('product_id', $productId)
             ->whereNotNull('rating')
-            ->whereHas('order', function ($query) {
-                $query->where('status', 'delivered');
-            });
+            ->whereHas('order', fn ($q) => $q->where('status', 'delivered'))
+            ->avg('rating');
 
-        $avg = $q->avg('rating');
-        $count = $q->count();
+        $count = \App\Models\OrderItem::where('product_id', $productId)
+            ->whereNotNull('rating')
+            ->whereHas('order', fn ($q) => $q->where('status', 'delivered'))
+            ->count();
 
         return [
             'avg' => $avg ? (float) round($avg, 1) : null,
