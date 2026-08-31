@@ -67,6 +67,7 @@ checkout, courier dashboard, and admin reports.
 ```json
 {
   "status": "ok",
+  "uptime": 0,
   "version": "1.0.0",
   "timestamp": "2025-01-01T00:00:00+00:00",
   "system": { "os": "Linux", "php_version": "8.3.0", "memory_usage": "32 MB" },
