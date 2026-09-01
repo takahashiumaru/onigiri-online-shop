@@ -36,6 +36,11 @@ checkout, courier dashboard, and admin reports.
    ```bash
    php artisan db:seed
    ```
+   **Default Login Accounts:**
+   - **Admin**: `admin@onigiri.com` / `password`
+   - **Customer**: `customer@onigiri.com` / `password`
+   - **Courier**: `kurir@onigiri.com` / `password`
+
 5. Install Node dependencies and build frontend assets:
    ```bash
    npm install
