@@ -48,8 +48,8 @@ class Product extends Model
 
     public function getImageUrlAttribute(): string
     {
-        if ($this->image && \Storage::disk('public')->exists($this->image)) {
-            return \Storage::url($this->image);
+        if ($this->image && \Illuminate\Support\Facades\Storage::disk('public')->exists($this->image)) {
+            return \Illuminate\Support\Facades\Storage::url($this->image);
         }
 
         return asset('images/default-onigiri.jpg');
