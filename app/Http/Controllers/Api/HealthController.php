@@ -39,10 +39,11 @@ class HealthController extends Controller
     private function checkStorage(): array
     {
         try {
-            $isWritable = is_writable(storage_path('framework/cache'));
+            $path = storage_path('framework/cache');
+            $isWritable = is_writable($path);
 
             return ['status' => $isWritable ? 'writable' : 'readonly'];
-        } catch (\Exception $e) {
+        } catch (\Exception $_e) {
             return ['status' => 'error'];
         }
     }
@@ -67,7 +68,7 @@ class HealthController extends Controller
             $latency = round((microtime(true) - $startTime) * 1000, 2);
 
             return ['status' => 'connected', 'latency' => $latency];
-        } catch (\Exception $e) {
+        } catch (\Exception $_e) {
             return ['status' => 'disconnected', 'latency' => null];
         }
     }
