@@ -44,7 +44,7 @@ class ProductController extends Controller
             }
 
             return response()->json($product);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $_e) {
             return self::errorResponse('Produk tidak ditemukan.', 404);
         }
     }
