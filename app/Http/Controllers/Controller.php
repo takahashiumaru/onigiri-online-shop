@@ -61,4 +61,28 @@ abstract class Controller
             'count' => $count,
         ];
     }
+
+    /**
+     * Handle and standardize API exceptions.
+     */
+    protected static function handleApiError(\Throwable $e, string $defaultMessage = 'Terjadi kesalahan internal.')
+    {
+        if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException) {
+            return self::errorResponse('Resource tidak ditemukan.', 404);
+        }
+
+        if ($e instanceof \Illuminate\Validation\ValidationException) {
+            return response()->json([
+                'error' => 'Validasi gagal.',
+                'messages' => $e->errors(),
+            ], 422);
+        }
+
+        \Illuminate\Support\Facades\Log::error($e->getMessage(), [
+            'exception' => get_class($e),
+            'trace' => $e->getTraceAsString(),
+        ]);
+
+        return self::errorResponse($defaultMessage, 500);
+    }
 }
