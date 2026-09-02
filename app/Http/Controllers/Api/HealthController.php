@@ -33,6 +33,7 @@ class HealthController extends Controller
             'storage' => [
                 'status' => $storage['status'],
             ],
+            'environment' => app()->environment(),
         ], $httpStatus);
     }
 

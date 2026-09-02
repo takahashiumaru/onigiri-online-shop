@@ -77,7 +77,8 @@ checkout, courier dashboard, and admin reports.
   "timestamp": "2025-01-01T00:00:00+00:00",
   "system": { "os": "Linux", "php_version": "8.3.0", "memory_usage": "32 MB" },
   "database": { "status": "connected", "latency_ms": 1.23 },
-  "storage": { "status": "writable" }
+  "storage": { "status": "writable" },
+  "environment": "production"
 }
 ```
 Returns `200 OK` when healthy, `503 Service Unavailable` when the database is
