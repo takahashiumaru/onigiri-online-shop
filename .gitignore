@@ -6,6 +6,9 @@
 /vendor
 storage/app/public/proofs/*.DS_Store
 storage/app/public/proofs/*.jpg
+storage/app/public/proofs/*.png
+storage/app/public/proofs/*.jpeg
+storage/app/public/proofs/*.webp
 .env.local
 .env.testing
 /storage/*.key
