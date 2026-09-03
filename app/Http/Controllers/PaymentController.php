@@ -66,16 +66,10 @@ class PaymentController extends Controller
         Log::info('Payment confirm called', ['order_id' => $orderId, 'order_number' => $orderNumber, 'user_id' => $request->user()->id ?? null]);
 
         $order = null;
-        if ($orderId) {
-            $order = Order::find($orderId);
-        }
-        if (! $order && $orderNumber) {
-            $order = Order::where('order_number', $orderNumber)->first();
-        }
-
-        if (! $order) {
+        try {
+            $order = Order::where('id', $orderId)->orWhere('order_number', $orderNumber)->firstOrFail();
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $_e) {
             Log::warning('Payment confirm: order not found', ['order_id' => $orderId, 'order_number' => $orderNumber]);
-
             return self::errorResponse('Order tidak ditemukan.', 404);
         }
 
