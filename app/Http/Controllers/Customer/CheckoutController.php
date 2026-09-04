@@ -35,8 +35,8 @@ class CheckoutController extends Controller
         }
 
         $totalQty = $cartItems->sum('quantity');
-        if ($totalQty < 20) {
-            return redirect()->route('cart.index')->with('error', "Minimal pembelian adalah 20 pcs. Kamu baru memesan {$totalQty} pcs.");
+        if ($totalQty < 10) {
+            return redirect()->route('cart.index')->with('error', "Minimal pembelian adalah 10 pcs. Kamu baru memesan {$totalQty} pcs.");
         }
 
         $subtotal = $cartItems->sum(fn ($item) => $item->quantity * $item->product->price);
