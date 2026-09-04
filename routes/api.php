@@ -13,10 +13,14 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 |
 | Available endpoints:
-| - GET /api/health: API status, DB connectivity, and app version.
-| - GET /api/routes: List all registered API routes (debug only).
-| - GET /api/reports/daily: Paginated daily sales report.
-| - GET /api/reports/monthly: Paginated monthly sales report.
+| - GET  /api/health: API status, DB connectivity, storage, and app version.
+| - GET  /api/routes: List all registered API routes (debug only).
+| - GET  /api/products: Paginated list of products (?search=, ?category=, ?perPage=, ?include=ratings).
+| - GET  /api/products/{id}: Detailed information for a single product (?include=ratings).
+| - GET  /api/reports/daily: Paginated daily sales report (?date=, ?perPage=).
+| - GET  /api/reports/monthly: Paginated monthly sales report (?month=, ?year=, ?perPage=).
+| - GET  /api/user: Current authenticated user (Sanctum-protected).
+| - POST /api/user/password: Update user password (Sanctum-protected).
 |
 */
 
