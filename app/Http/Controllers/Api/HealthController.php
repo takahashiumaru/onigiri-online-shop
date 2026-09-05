@@ -19,7 +19,7 @@ class HealthController extends Controller
         return response()->json([
             'status' => $isOk ? 'ok' : 'degraded',
             'version' => static::getVersion(),
-            'uptime' => (int) (microtime(true) - LARAVEL_START),
+            'uptime' => (int) (microtime(true) - (defined('LARAVEL_START') ? LARAVEL_START : 0)),
             'timestamp' => now()->toIso8601String(),
             'system' => [
                 'os' => PHP_OS,
