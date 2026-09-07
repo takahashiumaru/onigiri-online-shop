@@ -25,3 +25,5 @@ A point-of-sale and e-commerce system for managing orders and products.
 - `GET /api/products` - List products.
 - `GET /api/reports/daily` - Daily sales report.
 - `GET /api/reports/monthly` - Monthly sales report.
+- `GET /api/user` - Get current authenticated user.
+- `POST /api/user/password` - Update password.
