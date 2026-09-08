@@ -44,7 +44,7 @@ class ProductController extends Controller
             }
 
             return response()->json($product);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return self::handleApiError($e, 'Gagal memuat detail produk.');
         }
     }
