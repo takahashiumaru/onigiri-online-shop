@@ -34,6 +34,10 @@ abstract class Controller
             'from' => $from->toIso8601String(),
             'to' => $to->toIso8601String(),
             'data' => $paginated->items(),
+            'summary' => [
+                'totalRevenue' => (int) $paginated->getCollection()->sum('total'),
+                'orderCount' => $paginated->total(),
+            ],
             'total' => $paginated->total(),
             'page' => $paginated->currentPage(),
             'pageSize' => $paginated->perPage(),

@@ -27,6 +27,10 @@ class ReportTest extends TestCase
                 'from',
                 'to',
                 'data',
+                'summary' => [
+                    'totalRevenue',
+                    'orderCount',
+                ],
                 'total',
                 'page',
                 'pageSize',
@@ -50,6 +54,10 @@ class ReportTest extends TestCase
                 'from',
                 'to',
                 'data',
+                'summary' => [
+                    'totalRevenue',
+                    'orderCount',
+                ],
                 'total',
                 'page',
                 'pageSize',
