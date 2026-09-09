@@ -14,15 +14,17 @@ abstract class Controller
         return response()->json(['error' => $message], $status);
     }
 
-    protected static function paginatedResponse(\Illuminate\Pagination\LengthAwarePaginator $paginated): \Illuminate\Http\JsonResponse
+    protected static function paginatedResponse(\Illuminate\Pagination\LengthAwarePaginator $paginated, array $extra = []): \Illuminate\Http\JsonResponse
     {
-        return response()->json([
+        $response = [
             'data' => $paginated->items(),
             'total' => $paginated->total(),
             'page' => $paginated->currentPage(),
             'pageSize' => $paginated->perPage(),
             'totalPages' => $paginated->lastPage(),
-        ]);
+        ];
+
+        return response()->json(array_merge($response, $extra));
     }
 
     /**
@@ -30,18 +32,13 @@ abstract class Controller
      */
     protected static function reportResponse(\Illuminate\Pagination\LengthAwarePaginator $paginated, \Carbon\Carbon $from, \Carbon\Carbon $to): \Illuminate\Http\JsonResponse
     {
-        return response()->json([
+        return self::paginatedResponse($paginated, [
             'from' => $from->toIso8601String(),
             'to' => $to->toIso8601String(),
-            'data' => $paginated->items(),
             'summary' => [
                 'totalRevenue' => (int) $paginated->getCollection()->sum('total'),
                 'orderCount' => $paginated->total(),
             ],
-            'total' => $paginated->total(),
-            'page' => $paginated->currentPage(),
-            'pageSize' => $paginated->perPage(),
-            'totalPages' => $paginated->lastPage(),
         ]);
     }
 
