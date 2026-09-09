@@ -66,7 +66,7 @@ class HealthController extends Controller
             $startTime = microtime(true);
             DB::connection()->getPdo();
             DB::select('SELECT 1');
-            $latency = round((microtime(true) - $startTime) * 1000, 2);
+            $latency = (float) round((microtime(true) - $startTime) * 1000, 2);
 
             return ['status' => 'connected', 'latency' => $latency];
         } catch (\Exception $_e) {
