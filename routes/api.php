@@ -28,6 +28,7 @@ Route::get('/health', [HealthController::class, 'index']);
 Route::get('/routes', [HealthController::class, 'routes']);
 
 Route::get('/products', [ProductController::class, 'index']);
+Route::get('/products/categories', [ProductController::class, 'categories']);
 Route::get('/products/{id}', [ProductController::class, 'show']);
 
 Route::get('/reports/daily', [ReportController::class, 'daily']);

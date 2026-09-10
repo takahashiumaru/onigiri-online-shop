@@ -48,4 +48,22 @@ class ProductController extends Controller
             return self::handleApiError($e, 'Gagal memuat detail produk.');
         }
     }
+
+    public function categories()
+    {
+        try {
+            $categories = Product::whereNotNull('category')
+                ->where('category', '!=', '')
+                ->distinct()
+                ->orderBy('category')
+                ->pluck('category');
+
+            return response()->json([
+                'data' => $categories,
+                'total' => count($categories),
+            ]);
+        } catch (\Throwable $e) {
+            return self::handleApiError($e, 'Gagal memuat daftar kategori.');
+        }
+    }
 }
