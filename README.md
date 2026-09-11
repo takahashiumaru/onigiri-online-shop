@@ -25,6 +25,7 @@ A point-of-sale and e-commerce system for managing orders and products.
 - `GET /api/routes` - List all registered API routes (debug tool).
 - `GET /api/products` - List products.
   - Query params: `search` (string), `category` (string), `perPage` (1-100, default 10), `include=ratings`
+- `GET /api/products/categories` - List product categories.
 - `GET /api/products/{id}` - Single product detail.
   - Query params: `include=ratings`
 - `GET /api/reports/daily` - Daily sales report.
