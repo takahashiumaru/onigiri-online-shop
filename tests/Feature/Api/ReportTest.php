@@ -47,7 +47,7 @@ class ReportTest extends TestCase
             'created_at' => now(),
         ]);
 
-        $response = $this->getJson('/api/reports/monthly?month=' . now()->month . '&year=' . now()->year);
+        $response = $this->getJson('/api/reports/monthly?month='.now()->month.'&year='.now()->year);
 
         $response->assertStatus(200)
             ->assertJsonStructure([

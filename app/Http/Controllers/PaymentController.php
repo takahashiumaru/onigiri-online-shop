@@ -70,6 +70,7 @@ class PaymentController extends Controller
             $order = Order::where('id', $orderId)->orWhere('order_number', $orderNumber)->firstOrFail();
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $_e) {
             Log::warning('Payment confirm: order not found', ['order_id' => $orderId, 'order_number' => $orderNumber]);
+
             return self::errorResponse('Order tidak ditemukan.', 404);
         }
 
