@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\HealthController;
+use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\PasswordController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ReportController;
@@ -16,11 +17,14 @@ use Illuminate\Support\Facades\Route;
 | - GET  /api/health: API status, DB connectivity, storage, and app version.
 | - GET  /api/routes: List all registered API routes (debug only).
 | - GET  /api/products: Paginated list of products (?search=, ?category=, ?perPage=, ?include=ratings).
+| - GET  /api/products/categories: Unique list of product categories.
 | - GET  /api/products/{id}: Detailed information for a single product (?include=ratings).
 | - GET  /api/reports/daily: Paginated daily sales report (?date=, ?perPage=).
 | - GET  /api/reports/monthly: Paginated monthly sales report (?month=, ?year=, ?perPage=).
 | - GET  /api/user: Current authenticated user (Sanctum-protected).
 | - POST /api/user/password: Update user password (Sanctum-protected).
+| - GET  /api/orders: List paginated user/admin orders (Sanctum-protected).
+| - GET  /api/orders/{id}: Order detail (Sanctum-protected).
 |
 */
 
@@ -39,4 +43,6 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
     Route::post('/user/password', [PasswordController::class, 'update']);
+    Route::get('/orders', [OrderController::class, 'index']);
+    Route::get('/orders/{id}', [OrderController::class, 'show']);
 });
