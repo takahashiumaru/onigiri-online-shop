@@ -34,6 +34,8 @@ A point-of-sale and e-commerce system for managing orders and products.
 - `GET /api/reports/monthly` - Monthly sales report.
   - Query params: `month` (1-12), `year` (YYYY), `perPage` (default 15)
   - Returns `summary` with `totalRevenue` and `orderCount`, along with paginated items (`totalPages`, `total`, `page`, `pageSize`).
-- `GET /api/user` - Get current authenticated user (Sanctum-protected).
-- `POST /api/user/password` - Update password (Sanctum-protected).
+- GET /api/orders - List paginated user/admin orders (Sanctum-protected).
+- GET /api/orders/{id} - Order detail (Sanctum-protected).
+- GET /api/user - Get current authenticated user (Sanctum-protected).
+- POST /api/user/password - Update password (Sanctum-protected).
   - Body: `{ current_password, new_password, new_password_confirmation }`
