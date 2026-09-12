@@ -27,7 +27,7 @@ class ReportController extends Controller
      */
     public function daily(Request $request)
     {
-        $request->validate(['date' => 'nullable|date']);
+        $request->validate(['date' => 'nullable|date', 'perPage' => 'nullable|integer|between:1,100']);
 
         $from = Carbon::parse($request->date ?? 'today')->startOfDay();
         $to = $from->copy()->endOfDay();
@@ -45,6 +45,7 @@ class ReportController extends Controller
         $request->validate([
             'month' => 'nullable|integer|between:1,12',
             'year' => 'nullable|integer|min:2020',
+            'perPage' => 'nullable|integer|between:1,100',
         ]);
 
         $date = Carbon::createFromDate(
