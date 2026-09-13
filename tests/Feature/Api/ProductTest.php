@@ -29,7 +29,7 @@ test('get product categories returns unique categories', function () {
 test('get single product returns product details', function () {
     $product = Product::factory()->create(['name' => 'Onigiri Salmon']);
 
-    $response = $this->getJson('/api/products/' . $product->id);
+    $response = $this->getJson('/api/products/'.$product->id);
 
     $response->assertStatus(200)
         ->assertJsonFragment(['name' => 'Onigiri Salmon']);
