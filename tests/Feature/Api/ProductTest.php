@@ -14,6 +14,17 @@ test('get all products returns paginated list', function () {
         ->assertJsonStructure(['data', 'total', 'page', 'pageSize', 'totalPages']);
 });
 
+test('get all products filters by availability', function () {
+    Product::factory()->create(['name' => 'Available Item', 'is_available' => true]);
+    Product::factory()->create(['name' => 'Unavailable Item', 'is_available' => false]);
+
+    $response = $this->getJson('/api/products?is_available=true');
+
+    $response->assertStatus(200)
+        ->assertJsonCount(1, 'data')
+        ->assertJsonFragment(['name' => 'Available Item']);
+});
+
 test('get product categories returns unique categories', function () {
     Product::factory()->create(['category' => 'Food']);
     Product::factory()->create(['category' => 'Drink']);
