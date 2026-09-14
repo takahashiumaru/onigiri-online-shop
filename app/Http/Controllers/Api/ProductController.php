@@ -23,6 +23,13 @@ class ProductController extends Controller
             $query->where('name', 'like', '%'.$request->query('search').'%');
         }
 
+        if ($request->has('is_available')) {
+            $isAvailable = filter_var($request->query('is_available'), FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+            if ($isAvailable !== null) {
+                $query->where('is_available', $isAvailable);
+            }
+        }
+
         if ($request->query('include') === 'ratings') {
             $query->withRatings();
         }
