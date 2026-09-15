@@ -45,14 +45,14 @@ class ProductController extends Controller
             $product = Product::findOrFail($id);
 
             if ($request->query('include') === 'ratings') {
-                $stats = self::getProductRatingStats($product->id);
+                $stats = static::getProductRatingStats($product->id);
                 $product->rating_avg = $stats['avg'];
                 $product->rating_count = $stats['count'];
             }
 
             return response()->json($product);
         } catch (\Throwable $e) {
-            return self::handleApiError($e, 'Gagal memuat detail produk.');
+            return static::handleApiError($e, 'Gagal memuat detail produk.');
         }
     }
 
@@ -70,7 +70,7 @@ class ProductController extends Controller
                 'total' => count($categories),
             ]);
         } catch (\Throwable $e) {
-            return self::handleApiError($e, 'Gagal memuat daftar kategori.');
+            return static::handleApiError($e, 'Gagal memuat daftar kategori.');
         }
     }
 }

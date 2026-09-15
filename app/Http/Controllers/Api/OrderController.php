@@ -36,7 +36,7 @@ class OrderController extends Controller
 
             return static::paginatedResponse($orders);
         } catch (\Throwable $e) {
-            return self::handleApiError($e, 'Gagal memuat daftar pesanan.');
+            return static::handleApiError($e, 'Gagal memuat daftar pesanan.');
         }
     }
 
@@ -57,7 +57,7 @@ class OrderController extends Controller
 
             return response()->json($order);
         } catch (\Throwable $e) {
-            return self::handleApiError($e, 'Gagal memuat detail pesanan.');
+            return static::handleApiError($e, 'Gagal memuat detail pesanan.');
         }
     }
 }
