@@ -34,7 +34,7 @@ class ReportController extends Controller
         $perPage = (int) ($request->query('perPage') ?? 15);
         $orders = $this->getPaginatedOrders($from, $to, $perPage);
 
-        return self::reportResponse($orders, $from, $to);
+        return static::reportResponse($orders, $from, $to);
     }
 
     /**
@@ -59,6 +59,6 @@ class ReportController extends Controller
         $perPage = (int) ($request->query('perPage') ?? 15);
         $orders = $this->getPaginatedOrders($from, $to, $perPage);
 
-        return self::reportResponse($orders, $from, $to);
+        return static::reportResponse($orders, $from, $to);
     }
 }
