@@ -29,13 +29,14 @@ A point-of-sale and e-commerce system for managing orders and products.
 - `GET /api/products/{id}` - Single product detail.
   - Query params: `include=ratings`
 - `GET /api/reports/daily` - Daily sales report.
-  - Query params: `date` (YYYY-MM-DD, default today), `perPage` (default 15)
+  - Query params: `date` (YYYY-MM-DD, default today), `perPage` (1-100, default 15)
   - Returns `summary` with `totalRevenue` and `orderCount`, along with paginated items (`totalPages`, `total`, `page`, `pageSize`).
 - `GET /api/reports/monthly` - Monthly sales report.
-  - Query params: `month` (1-12), `year` (YYYY), `perPage` (default 15)
+  - Query params: `month` (1-12), `year` (YYYY), `perPage` (1-100, default 15)
   - Returns `summary` with `totalRevenue` and `orderCount`, along with paginated items (`totalPages`, `total`, `page`, `pageSize`).
-- GET /api/orders - List paginated user/admin orders (Sanctum-protected).
-- GET /api/orders/{id} - Order detail (Sanctum-protected).
-- GET /api/user - Get current authenticated user (Sanctum-protected).
-- POST /api/user/password - Update password (Sanctum-protected).
+- `GET /api/orders` - List paginated user/admin orders (Sanctum-protected).
+  - Query params: `status` (string), `payment_status` (string), `perPage` (1-100, default 10)
+- `GET /api/orders/{id}` - Order detail (Sanctum-protected).
+- `GET /api/user` - Get current authenticated user (Sanctum-protected).
+- `POST /api/user/password` - Update password (Sanctum-protected).
   - Body: `{ current_password, new_password, new_password_confirmation }`
