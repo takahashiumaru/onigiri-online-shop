@@ -22,7 +22,7 @@ class PasswordController extends Controller
             $user = $request->user();
 
             if (! $user || ! Hash::check($data['current_password'], $user->password)) {
-                return self::errorResponse('Password saat ini tidak sesuai.', 422);
+                return static::errorResponse('Password saat ini tidak sesuai.', 422);
             }
 
             $user->password = Hash::make($data['new_password']);
@@ -30,7 +30,7 @@ class PasswordController extends Controller
 
             return response()->json(['message' => 'Password berhasil diperbarui.']);
         } catch (\Throwable $e) {
-            return self::handleApiError($e, 'Gagal memperbarui password.');
+            return static::handleApiError($e, 'Gagal memperbarui password.');
         }
     }
 }
