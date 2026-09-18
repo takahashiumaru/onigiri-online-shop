@@ -6,7 +6,7 @@ A point-of-sale and e-commerce system for managing orders and products.
 - Product catalog management
 - Order processing and reporting (daily/monthly sales)
 - User authentication via Sanctum
-- API-first architecture with standardized responses
+- API-first architecture with standardized responses and structured error handling
 
 ## Tech Stack
 - Framework: Laravel 12.x
@@ -40,3 +40,9 @@ A point-of-sale and e-commerce system for managing orders and products.
 - `GET /api/user` - Get current authenticated user (Sanctum-protected).
 - `POST /api/user/password` - Update password (Sanctum-protected).
   - Body: `{ current_password, new_password, new_password_confirmation }`
+
+## Error Responses
+All API endpoints return errors with consistent JSON contracts:
+- `400 Bad Request` / `500 Internal Server Error`: `{"error": "<message>"}`
+- `404 Not Found`: `{"error": "Resource tidak ditemukan."}`
+- `422 Unprocessable Entity`: `{"error": "Validasi gagal.", "messages": { ... }}`
