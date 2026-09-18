@@ -27,14 +27,18 @@ class ReportController extends Controller
      */
     public function daily(Request $request)
     {
-        $request->validate(['date' => 'nullable|date', 'perPage' => 'nullable|integer|between:1,100']);
+        try {
+            $request->validate(['date' => 'nullable|date', 'perPage' => 'nullable|integer|between:1,100']);
 
-        $from = Carbon::parse($request->date ?? 'today')->startOfDay();
-        $to = $from->copy()->endOfDay();
-        $perPage = (int) ($request->query('perPage') ?? 15);
-        $orders = $this->getPaginatedOrders($from, $to, $perPage);
+            $from = Carbon::parse($request->date ?? 'today')->startOfDay();
+            $to = $from->copy()->endOfDay();
+            $perPage = (int) ($request->query('perPage') ?? 15);
+            $orders = $this->getPaginatedOrders($from, $to, $perPage);
 
-        return static::reportResponse($orders, $from, $to);
+            return static::reportResponse($orders, $from, $to);
+        } catch (\Throwable $e) {
+            return static::handleApiError($e, 'Gagal memuat laporan harian.');
+        }
     }
 
     /**
@@ -42,23 +46,27 @@ class ReportController extends Controller
      */
     public function monthly(Request $request)
     {
-        $request->validate([
-            'month' => 'nullable|integer|between:1,12',
-            'year' => 'nullable|integer|min:2020',
-            'perPage' => 'nullable|integer|between:1,100',
-        ]);
+        try {
+            $request->validate([
+                'month' => 'nullable|integer|between:1,12',
+                'year' => 'nullable|integer|min:2020',
+                'perPage' => 'nullable|integer|between:1,100',
+            ]);
 
-        $date = Carbon::createFromDate(
-            $request->year ?? date('Y'),
-            $request->month ?? date('m'),
-            1
-        );
+            $date = Carbon::createFromDate(
+                $request->year ?? date('Y'),
+                $request->month ?? date('m'),
+                1
+            );
 
-        $from = $date->copy()->startOfMonth();
-        $to = $date->copy()->endOfMonth();
-        $perPage = (int) ($request->query('perPage') ?? 15);
-        $orders = $this->getPaginatedOrders($from, $to, $perPage);
+            $from = $date->copy()->startOfMonth();
+            $to = $date->copy()->endOfMonth();
+            $perPage = (int) ($request->query('perPage') ?? 15);
+            $orders = $this->getPaginatedOrders($from, $to, $perPage);
 
-        return static::reportResponse($orders, $from, $to);
+            return static::reportResponse($orders, $from, $to);
+        } catch (\Throwable $e) {
+            return static::handleApiError($e, 'Gagal memuat laporan bulanan.');
+        }
     }
 }
