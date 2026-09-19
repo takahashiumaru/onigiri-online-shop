@@ -70,8 +70,8 @@ abstract class Controller
 
         if ($e instanceof \Illuminate\Validation\ValidationException) {
             return response()->json([
-                'error' => 'Validasi gagal.',
-                'messages' => $e->errors(),
+                'message' => $e->getMessage(),
+                'errors' => $e->errors(),
             ], 422);
         }
 
