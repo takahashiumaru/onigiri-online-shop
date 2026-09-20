@@ -15,24 +15,26 @@ class OrderController extends Controller
     {
         try {
             $user = $request->user();
-            $perPage = (int) ($request->query('perPage') ?? 10);
-            $perPage = ($perPage > 0 && $perPage <= 100) ? $perPage : 10;
-
+            $perPage = $request->query('perPage');
+            $validatedPerPage = (is_numeric($perPage) && $perPage > 0 && $perPage <= 100) ? (int) $perPage : 10;
+            
             $query = Order::query()->with(['items.product', 'user:id,name,email']);
 
             if ($user->role !== 'admin') {
                 $query->where('user_id', $user->id);
             }
 
-            if ($request->filled('status')) {
-                $query->where('status', $request->query('status'));
+            $status = $request->query('status');
+            if (is_string($status)) {
+                $query->where('status', $status);
             }
 
-            if ($request->filled('payment_status')) {
-                $query->where('payment_status', $request->query('payment_status'));
+            $paymentStatus = $request->query('payment_status');
+            if (is_string($paymentStatus)) {
+                $query->where('payment_status', $paymentStatus);
             }
 
-            $orders = $query->latest()->paginate($perPage);
+            $orders = $query->latest()->paginate($validatedPerPage);
 
             return static::paginatedResponse($orders);
         } catch (\Throwable $e) {
