@@ -36,7 +36,9 @@ A point-of-sale and e-commerce system for managing orders and products.
   - Returns `summary` with `totalRevenue` and `orderCount`, along with paginated items (`totalPages`, `total`, `page`, `pageSize`).
 - `GET /api/orders` - List paginated user/admin orders (Sanctum-protected).
   - Query params: `status` (string), `payment_status` (string), `perPage` (1-100, default 10)
+  - Returns paginated order list with user and items details.
 - `GET /api/orders/{id}` - Order detail (Sanctum-protected).
+  - Returns full order details with courier, items, and customer info.
 - `GET /api/user` - Get current authenticated user (Sanctum-protected).
 - `POST /api/user/password` - Update password (Sanctum-protected).
   - Body: `{ current_password, new_password, new_password_confirmation }`
