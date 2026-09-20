@@ -55,7 +55,9 @@ class OrderController extends Controller
 
             $order = $query->findOrFail($id);
 
-            return response()->json($order);
+            return static::successResponse($order);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return static::errorResponse('Pesanan tidak ditemukan.', 404);
         } catch (\Throwable $e) {
             return static::handleApiError($e, 'Gagal memuat detail pesanan.');
         }
