@@ -17,11 +17,13 @@ class ProductController extends Controller
             $query = Product::query();
 
             if ($request->filled('category')) {
-                $query->where('category', $request->query('category'));
+                $category = (string) $request->query('category');
+                $query->where('category', $category);
             }
 
             if ($request->filled('search')) {
-                $query->where('name', 'like', '%'.$request->query('search').'%');
+                $search = (string) $request->query('search');
+                $query->where('name', 'like', '%'.$search.'%');
             }
 
             if ($request->has('is_available')) {
@@ -31,7 +33,7 @@ class ProductController extends Controller
                 }
             }
 
-            if ($request->query('include') === 'ratings') {
+            if ((string) $request->query('include') === 'ratings') {
                 $query->withRatings();
             }
 
@@ -48,7 +50,7 @@ class ProductController extends Controller
         try {
             $product = Product::findOrFail($id);
 
-            if ($request->query('include') === 'ratings') {
+            if ((string) $request->query('include') === 'ratings') {
                 $stats = static::getProductRatingStats($product->id);
                 $product->rating_avg = $stats['avg'];
                 $product->rating_count = $stats['count'];
