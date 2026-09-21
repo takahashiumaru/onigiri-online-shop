@@ -14,11 +14,26 @@ A point-of-sale and e-commerce system for managing orders and products.
 - Database: SQLite
 
 ## Setup
-1. Clone the repository.
-2. Run `composer install`.
-3. Run `npm install && npm run build`.
-4. Run `php artisan migrate --seed`.
-5. Run `php artisan serve`.
+```bash
+# Clone the repository
+git clone https://github.com/takahashiumaru/onigiri-online-shop.git
+cd onigiri-online-shop
+
+# Install dependencies
+composer install
+npm install
+
+# Build frontend assets
+npm run build
+
+# Setup environment & database
+cp .env.example .env
+php artisan key:generate
+php artisan migrate --seed
+
+# Start development server
+php artisan serve
+```
 
 ## API Documentation
 - `GET /api/health` - System health check (DB connectivity with latency, memory, storage status, version).
