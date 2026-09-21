@@ -13,6 +13,8 @@ storage/app/public/proofs/*.webp
 .env.testing
 /storage/*.key
 /storage/framework/cache/data/*
+/storage/framework/views/*
+/storage/framework/sessions/*
 /database/*.sqlite
 .DS_Store
 **/node_modules/.DS_Store
