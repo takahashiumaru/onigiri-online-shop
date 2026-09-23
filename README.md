@@ -55,8 +55,11 @@ php artisan serve
 - `GET /api/orders/{id}` - Order detail (Sanctum-protected).
   - Returns full order details with courier, items, and customer info.
 - `GET /api/user` - Get current authenticated user (Sanctum-protected).
-- `POST /api/user/password` - Update password (Sanctum-protected).
+- `POST /api/user/password` - Update user password (Sanctum-protected).
   - Body: `{ current_password, new_password, new_password_confirmation }`
+- `GET /api/couriers` - List paginated couriers.
+  - Query params: `perPage` (1-100, default 10)
+- `GET /api/couriers/{id}` - Get single courier detail.
 
 ## Error Responses
 All API endpoints return errors with consistent JSON contracts:
