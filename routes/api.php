@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\CourierController;
 use App\Http\Controllers\Api\HealthController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\PasswordController;
@@ -34,6 +35,9 @@ Route::get('/routes', [HealthController::class, 'routes']);
 Route::get('/products', [ProductController::class, 'index']);
 Route::get('/products/categories', [ProductController::class, 'categories']);
 Route::get('/products/{id}', [ProductController::class, 'show']);
+
+Route::get('/couriers', [CourierController::class, 'index']);
+Route::get('/couriers/{id}', [CourierController::class, 'show']);
 
 Route::get('/reports/daily', [ReportController::class, 'daily']);
 Route::get('/reports/monthly', [ReportController::class, 'monthly']);
